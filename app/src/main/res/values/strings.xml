@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">HeatStress</string>
+    <string-array name="array_Subjects">
+        <item>RCP</item>
+        <item>Dehidration</item>
+        <item>Hemlich</item>
+    </string-array>
+</resources>
