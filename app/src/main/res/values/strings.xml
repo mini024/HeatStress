@@ -1,8 +1,23 @@
 <resources>
     <string name="app_name">HeatStress</string>
+    <string name="Emargency_Recomendations">
+
+        "If you are experiencing:
+
+        1) Confusion, slurred speech
+        2) Loss of consciousness
+        3) Red, hot, dry skin or profuse sweating
+        4) Very high body temperature
+        5) Seizures
+
+        Call your manager and 911"
+
+    </string>
+
     <string-array name="array_Subjects">
         <item>RCP</item>
         <item>Dehidration</item>
         <item>Hemlich</item>
     </string-array>
+
 </resources>
