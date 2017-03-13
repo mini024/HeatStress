@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_info"
     android:layout_width="match_parent"
@@ -11,4 +12,113 @@
     android:background="@drawable/background"
     tools:context="com.example.jessicamcavazoserhard.heatstress.InfoActivity">
 
+    <SeekBar
+        android:id="@+id/seek_Call911"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true"
+        android:thumb="@drawable/PhoneSlider" />
+
+    <ImageView
+        android:id="@+id/image_Do"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@mipmap/ic_launcher"
+        android:layout_below="@+id/image_MoreInfo"
+        android:layout_alignStart="@+id/text_Emergencies" />
+
+    <TextView
+        android:id="@+id/text_Do"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Do"
+        android:textColor="@android:color/holo_green_dark"
+        android:textSize="30sp"
+        android:textStyle="bold"
+        android:layout_alignBottom="@+id/image_Do"
+        android:layout_alignStart="@+id/text_DoRecomendations" />
+
+    <TextView
+        android:id="@+id/text_DoRecomendations"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="14dp"
+        android:text="TextView"
+        android:textColor="@color/cardview_light_background"
+        android:layout_below="@+id/text_Do"
+        android:layout_toStartOf="@+id/image_Dont"
+        android:layout_marginEnd="22dp" />
+
+    <ImageButton
+        android:id="@+id/image_MoreInfo"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:adjustViewBounds="true"
+        app:srcCompat="@android:drawable/ic_dialog_info"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true" />
+
+    <ImageView
+        android:id="@+id/image_Dont"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="51dp"
+        app:srcCompat="@mipmap/ic_launcher"
+        android:layout_below="@+id/text_DoRecomendations"
+        android:layout_alignEnd="@+id/text_Emergencies" />
+
+    <TextView
+        android:id="@+id/text_Dont"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Don't"
+        android:textColor="?android:attr/colorFocusedHighlight"
+        android:textSize="30sp"
+        android:textStyle="bold"
+        android:layout_alignTop="@+id/image_Dont"
+        android:layout_alignEnd="@+id/text_DoRecomendations" />
+
+    <TextView
+        android:id="@+id/text_DontRecomendations"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/text_Dont"
+        android:layout_below="@+id/text_Dont"
+        android:layout_marginTop="22dp"
+        android:text="TextView"
+        android:textColor="@color/cardview_light_background" />
+
+    <ImageView
+        android:id="@+id/image_Telephone"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_below="@+id/text_DontRecomendations"
+        android:layout_marginTop="11dp"
+        android:layout_toStartOf="@+id/text_Emergencies"
+        app:srcCompat="@drawable/Phone" />
+
+    <TextView
+        android:id="@+id/text_Emergencies"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Emergencies"
+        android:textColor="@android:color/holo_red_dark"
+        android:textSize="30sp"
+        android:textStyle="bold"
+        android:layout_alignTop="@+id/image_Telephone"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:id="@+id/text_EMsymptoms"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/Emargency_Recomendations"
+        android:textColor="@color/cardview_light_background"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        android:layout_above="@+id/seek_Call911"
+        android:layout_alignStart="@+id/image_Telephone"
+        android:layout_marginBottom="15dp" />
 </RelativeLayout>
