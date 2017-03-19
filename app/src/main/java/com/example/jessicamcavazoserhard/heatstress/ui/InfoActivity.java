@@ -1,7 +1,9 @@
-package com.example.jessicamcavazoserhard.heatstress;
+package com.example.jessicamcavazoserhard.heatstress.ui;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+
+import com.example.jessicamcavazoserhard.heatstress.R;
 
 public class InfoActivity extends AppCompatActivity {
 
