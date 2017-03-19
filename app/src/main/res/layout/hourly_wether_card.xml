@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="100dp"
     android:layout_height="150dp"
-    android:background="@color/card_color">
+    android:background="@color/card_color"
+    android:id="@+id/cont_item_root">
 
     <TextView
         android:text="12:00 PM"
@@ -12,7 +13,8 @@
         android:layout_height="wrap_content"
         android:id="@+id/tv_hour_card"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:textColor="@android:color/background_light" />
 
     <ImageView
         android:layout_width="64dp"
@@ -20,7 +22,7 @@
         app:srcCompat="@mipmap/ic_launcher"
         android:layout_below="@+id/tv_hour_card"
         android:layout_centerHorizontal="true"
-        android:id="@+id/imageView" />
+        android:id="@+id/iv_weather_card" />
 
     <LinearLayout
         android:orientation="vertical"
@@ -28,7 +30,7 @@
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
         android:id="@+id/temp_hum"
-        android:layout_below="@+id/imageView"
+        android:layout_below="@+id/iv_weather_card"
         android:layout_centerHorizontal="true">
 
         <LinearLayout
@@ -49,7 +51,8 @@
                 android:layout_width="50dp"
                 android:layout_height="wrap_content"
                 android:id="@+id/tv_temp_card"
-                android:layout_weight="1" />
+                android:layout_weight="1"
+                android:textColor="@android:color/background_light" />
 
         </LinearLayout>
 
@@ -72,7 +75,8 @@
                 android:id="@+id/tv_hum_card"
                 android:layout_gravity="center_vertical"
                 android:layout_weight="1"
-                android:text="70 %" />
+                android:text="70 %"
+                android:textColor="@android:color/background_light" />
         </LinearLayout>
 
     </LinearLayout>
