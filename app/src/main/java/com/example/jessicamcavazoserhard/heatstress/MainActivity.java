@@ -5,23 +5,24 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
 
-    Button btGo;
+    ImageButton btGo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        btGo = (Button) findViewById(R.id.button_go);
+        btGo = (ImageButton) findViewById(R.id.imageButton_risk);
         btGo.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View v) {
-        Intent i = new Intent(this , MoreInfoActivity.class);
+        Intent i = new Intent(this , InfoActivity.class);
         startActivity(i);
     }
 }
