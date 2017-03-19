@@ -1,16 +1,15 @@
-package com.example.jessicamcavazoserhard.heatstress;
+package com.example.jessicamcavazoserhard.heatstress.ui;
 
 import android.app.ListActivity;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ListView;
 
-import java.io.Serializable;
+import com.example.jessicamcavazoserhard.heatstress.R;
+import com.example.jessicamcavazoserhard.heatstress.model.Subject;
+
 import java.util.ArrayList;
 
 public class MoreInfoActivity extends ListActivity implements AdapterView.OnItemClickListener {

@@ -1,4 +1,4 @@
-package com.example.jessicamcavazoserhard.heatstress;
+package com.example.jessicamcavazoserhard.heatstress.model;
 
 import java.io.Serializable;
 

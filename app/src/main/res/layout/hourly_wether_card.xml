@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="100dp"
+    android:layout_height="150dp"
+    android:background="@color/card_color">
+
+    <TextView
+        android:text="12:00 PM"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/tv_hour_card"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
+
+    <ImageView
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        app:srcCompat="@mipmap/ic_launcher"
+        android:layout_below="@+id/tv_hour_card"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/imageView" />
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:id="@+id/temp_hum"
+        android:layout_below="@+id/imageView"
+        android:layout_centerHorizontal="true">
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                app:srcCompat="@mipmap/ic_launcher"
+                android:id="@+id/iv_temp_card"
+                android:layout_weight="1" />
+
+            <TextView
+                android:layout_gravity="center_vertical"
+                android:text="100 °F"
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/tv_temp_card"
+                android:layout_weight="1" />
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                app:srcCompat="@mipmap/ic_launcher"
+                android:id="@+id/iv_hum_card"
+                android:layout_weight="1" />
+
+            <TextView
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/tv_hum_card"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:text="70 %" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+</RelativeLayout>
