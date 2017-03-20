@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
@@ -11,7 +10,7 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     android:orientation="vertical"
     android:background="@drawable/background"
-    tools:context="com.example.jessicamcavazoserhard.heatstress.MainActivity">
+    tools:context="com.example.jessicamcavazoserhard.heatstress.ui.MainActivity">
 
     <EditText
         android:id="@+id/editText_address"
@@ -46,14 +45,16 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+
         <ImageButton
             android:id="@+id/imageButton_risk"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
             android:layout_centerHorizontal="true"
-            android:src="@drawable/riskimage"
             android:background="@android:color/transparent"
-            android:contentDescription="Risk image Button"/>
+            android:contentDescription="Risk image Button"
+            android:scaleType="fitXY"
+            android:src="@drawable/riskimage" />
 
         <TextView
             android:id="@+id/textView_risk"
@@ -139,4 +140,12 @@
         android:layout_height="35dp"
         android:thumb="@drawable/phoneslider"
         android:layout_marginTop="25dp"/>
+
+    <android.support.v7.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_height="150dp"
+        android:id="@+id/rec_view_main" />
+
 </LinearLayout>

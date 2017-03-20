@@ -1,8 +1,11 @@
-package com.example.jessicamcavazoserhard.heatstress;
+package com.example.jessicamcavazoserhard.heatstress.ui;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.TextView;
+
+import com.example.jessicamcavazoserhard.heatstress.R;
+import com.example.jessicamcavazoserhard.heatstress.model.Subject;
 
 public class DetailActivity extends AppCompatActivity {
 

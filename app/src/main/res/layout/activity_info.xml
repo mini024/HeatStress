@@ -10,7 +10,7 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:background="@drawable/background"
-    tools:context="com.example.jessicamcavazoserhard.heatstress.InfoActivity">
+    tools:context="com.example.jessicamcavazoserhard.heatstress.ui.InfoActivity">
 
     <SeekBar
         android:id="@+id/seek_Call911"
@@ -50,15 +50,6 @@
         android:layout_below="@+id/text_Do"
         android:layout_centerHorizontal="true"
         android:textColor="@android:color/white" />
-
-    <ImageButton
-        android:id="@+id/image_MoreInfo"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:adjustViewBounds="true"
-        app:srcCompat="@android:drawable/ic_dialog_info"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true" />
 
     <ImageView
         android:id="@+id/image_Dont"
@@ -121,4 +112,13 @@
         android:layout_above="@+id/seek_Call911"
         android:layout_alignStart="@+id/image_Telephone"
         android:textColor="@android:color/white" />
+
+    <ImageButton
+        android:id="@+id/image_MoreInfo"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:adjustViewBounds="true"
+        app:srcCompat="@android:drawable/ic_dialog_info"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true" />
 </RelativeLayout>
