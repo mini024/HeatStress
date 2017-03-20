@@ -19,13 +19,13 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentStart="true"
-        android:thumb="@drawable/phoneslider" />
+        android:thumb="@drawable/phone_slider" />
 
     <ImageView
         android:id="@+id/image_Do"
         android:layout_width="35dp"
         android:layout_height="35dp"
-        app:srcCompat="@drawable/smileface"
+        app:srcCompat="@drawable/smile_face"
         android:layout_below="@+id/image_MoreInfo"
         android:layout_alignStart="@+id/text_Emergencies"
         android:layout_marginStart="14dp" />
@@ -55,7 +55,7 @@
         android:id="@+id/image_Dont"
         android:layout_width="35dp"
         android:layout_height="35dp"
-        app:srcCompat="@drawable/sickface"
+        app:srcCompat="@drawable/sick_face"
         android:layout_marginTop="31dp"
         android:layout_below="@+id/text_DoRecomendations"
         android:layout_alignEnd="@+id/text_Emergencies" />
