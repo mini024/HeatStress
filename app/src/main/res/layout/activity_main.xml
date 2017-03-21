@@ -19,7 +19,7 @@
         android:layout_height="wrap_content"
         android:hint="Enter Address"
         android:textAlignment="center"
-        android:textColor="@color/textColorGray"
+        android:textColor="@android:color/background_light"
         android:textColorHint="@color/textColorGray" />
 
 
