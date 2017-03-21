@@ -1,18 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
     android:orientation="vertical"
     android:background="@drawable/background"
     tools:context="com.example.jessicamcavazoserhard.heatstress.ui.MainActivity">
 
     <EditText
+        android:layout_weight="1"
         android:id="@+id/editText_address"
         style="@style/Widget.AppCompat.EditText"
         android:layout_width="match_parent"
@@ -23,7 +20,16 @@
         android:textColorHint="@color/textColorGray" />
 
 
+    <android.support.v7.widget.RecyclerView
+        android:layout_weight="1"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:id="@+id/rec_view_main"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true" />
+
     <RadioButton
+        android:layout_weight="1"
         android:id="@+id/radioButton_currentLocation"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -31,47 +37,18 @@
         android:checked="false"
         android:text="Use current location"
         android:textColor="@android:color/background_light"
-        android:buttonTint="@android:color/background_light" />
-
-    <TextView
-        android:id="@+id/textView_now"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:textColor="@android:color/white"
-        android:layout_marginBottom="20dp"
-        android:text="Now" />
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <ImageButton
-            android:id="@+id/imageButton_risk"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:layout_centerHorizontal="true"
-            android:background="@android:color/transparent"
-            android:contentDescription="Risk image Button"
-            android:scaleType="fitXY"
-            android:src="@drawable/riskimage" />
-
-        <TextView
-            android:id="@+id/textView_risk"
-            android:text="Minimal risk"
-            android:textColor="@android:color/white"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-    </RelativeLayout>
+        android:buttonTint="@android:color/background_light"
+        android:layout_below="@+id/editText_address"
+        android:layout_centerHorizontal="true" />
 
     <LinearLayout
+        android:layout_weight="1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:weightSum="2"
-        android:layout_marginTop="30dp">
+        android:layout_above="@+id/seek_Call911"
+        android:layout_alignParentStart="true">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -103,6 +80,7 @@
                 android:layout_weight="2"/>
         </LinearLayout>
         <LinearLayout
+
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
@@ -135,17 +113,52 @@
     </LinearLayout>
 
     <SeekBar
+        android:layout_weight="1"
         android:id="@+id/seek_Call911"
         android:layout_width="match_parent"
         android:layout_height="35dp"
         android:thumb="@drawable/phone_slider"
-        android:layout_marginTop="25dp"/>
+        android:layout_above="@+id/rec_view_main"
+        android:layout_alignParentStart="true" />
 
-    <android.support.v7.widget.RecyclerView
+    <TextView
+        android:layout_weight="1"
+        android:id="@+id/textView_now"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:textColor="@android:color/white"
+        android:text="Now"
+        android:layout_below="@+id/radioButton_currentLocation"
+        android:layout_centerHorizontal="true" />
+
+    <RelativeLayout
+        android:layout_weight="1"
         android:layout_width="match_parent"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_height="150dp"
-        android:id="@+id/rec_view_main" />
+        android:layout_height="wrap_content"
+        android:layout_marginTop="54dp"
+        android:layout_below="@+id/textView_now"
+        android:layout_alignParentStart="true">
 
-</LinearLayout>
+        <TextView
+            android:id="@+id/textView_risk"
+            android:text="Minimal risk"
+            android:textColor="@android:color/white"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <ImageButton
+            android:id="@+id/imageButton_risk"
+            android:layout_width="150dp"
+            android:background="@android:color/transparent"
+            android:contentDescription="Risk image Button"
+            android:scaleType="fitXY"
+            android:src="@drawable/riskimage"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_height="150dp" />
+    </RelativeLayout>
+
+</RelativeLayout>
