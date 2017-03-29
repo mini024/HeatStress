@@ -1,6 +1,7 @@
 package com.example.jessicamcavazoserhard.heatstress.ui;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -8,6 +9,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.SeekBar;
+import android.widget.Toast;
 
 import com.example.jessicamcavazoserhard.heatstress.R;
 import com.example.jessicamcavazoserhard.heatstress.adapter.WeatherCardAdapter;
@@ -18,6 +21,8 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
 
     ImageButton btGo;
+    SeekBar sbCall;
+    int sbprogress;
     private RecyclerView recyclerView;
     private WeatherCardAdapter adapter;
     private ArrayList<WeatherCard> listData;
@@ -41,12 +46,54 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         btGo = (ImageButton) findViewById(R.id.imageButton_risk);
         btGo.setOnClickListener(this);
+
+        sbCall = (SeekBar) findViewById(R.id.seek_Call911);
+        sbCall.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                // TODO Auto-generated method stub
+                if (sbprogress > 93){
+                    //Making Call
+                    Intent i = new Intent(Intent.ACTION_CALL);
+                    i.setData(Uri.parse("tel:8186938092"));
+                    startActivity(i);
+
+                } else {
+                    sbCall.setProgress(0);
+                }
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                // TODO Auto-generated method stub
+            }
+
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                // TODO Auto-generated method stub
+                sbprogress = progress;
+            }
+        });
     }
 
     @Override
     public void onClick(View v) {
         Intent i = new Intent(this , InfoActivity.class);
         startActivity(i);
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        sbCall.setProgress(0);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        sbCall.setProgress(0);
+        //Restore state here
     }
 
     ArrayList<WeatherCard> getData(){
@@ -78,4 +125,5 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         return dummyData ;
     }
+
 }
