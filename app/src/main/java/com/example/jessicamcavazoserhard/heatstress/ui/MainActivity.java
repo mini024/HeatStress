@@ -145,11 +145,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         return dummyData ;
     }
 
-    void calculateRisk (int temperature, int humidity ){
-
-        if ((temperature > 32 && temperature < )
-
-    }
+//    void calculateRisk (int temperature, int humidity ){
+//
+//        if ((temperature > 32 && temperature < )
+//
+//    }
 
 
     //MARK: Get data of cards from JSON response
