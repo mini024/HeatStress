@@ -105,7 +105,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     InputMethodManager in = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     in.hideSoftInputFromWindow(etLocation.getApplicationWindowToken(),InputMethodManager.HIDE_NOT_ALWAYS);
                     new RetrieveWeatherForLocation().execute();
-                    // llamada a funcion que cambia el ring
                     return true;
                 default:
                     break;
@@ -147,7 +146,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     void calculateRisk (int temperature, int humidity ){
 
-        if ((temperature > 32 && temperature < )
+        if (temperature < 32){
+            btGo.setBackgroundResource(R.drawable.minimal_risk);
+        }
+
+        if (temperature > 108){
+            btGo.setBackgroundResource(R.drawable.very_high_risk);
+        }
+
+        if ((temperature >= 32 && temperature <= 89) && (humidity >= 40 && humidity <= 45)){
+
+            btGo.setBackgroundResource(R.drawable.minimal_risk);
+        }
+
+
 
     }
 
@@ -262,6 +274,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 tvCurrentTemperature.setText(temperature + " ºF");
 
                 tvCurrentHumidity.setText(humidity);
+
+                calculateRisk(Integer.parseInt(tvCurrentTemperature.getText().toString()), Integer.parseInt(tvCurrentHumidity.getText().toString()));
 
                 dataTime = (JSONArray) object.getJSONArray("hourly_forecast");
 
