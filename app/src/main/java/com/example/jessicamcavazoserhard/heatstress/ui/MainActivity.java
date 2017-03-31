@@ -1,9 +1,12 @@
 package com.example.jessicamcavazoserhard.heatstress.ui;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -39,7 +42,7 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, View.OnKeyListener {
 
-    private static final String[] COUNTRIES = new String[] {
+    private static final String[] COUNTRIES = new String[]{
             "Belgium", "France", "Italy", "Germany", "Spain"
     };
 
@@ -74,7 +77,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         recyclerView.setLayoutManager(layoutManager);
 
-        adapter = new WeatherCardAdapter(listData,this);
+        adapter = new WeatherCardAdapter(listData, this);
         recyclerView.setAdapter(adapter);
 
         btGo = (ImageButton) findViewById(R.id.imageButton_risk);
@@ -91,10 +94,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
                 // TODO Auto-generated method stub
-                if (sbprogress > 93){
+                if (sbprogress > 93) {
                     //Making Call
                     Intent i = new Intent(Intent.ACTION_CALL);
                     i.setData(Uri.parse("tel:8186938092"));
+                    if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                        // TODO: Consider calling
+                        //    ActivityCompat#requestPermissions
+                        // here to request the missing permissions, and then overriding
+                        //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                        //                                          int[] grantResults)
+                        // to handle the case where the user grants the permission. See the documentation
+                        // for ActivityCompat#requestPermissions for more details.
+                        return;
+                    }
                     startActivity(i);
 
                 } else {
@@ -191,24 +204,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         return dummyData ;
     }
 
-    void calculateRisk (int temperature, int humidity ){
-
-        if (temperature < 32){
-            btGo.setBackgroundResource(R.drawable.minimal_risk);
-        }
-
-        if (temperature > 108){
-            btGo.setBackgroundResource(R.drawable.very_high_risk);
-        }
-
-        if ((temperature >= 32 && temperature <= 89) && (humidity >= 40 && humidity <= 45)){
-
-            btGo.setBackgroundResource(R.drawable.minimal_risk);
-        }
-
-
-
-    }
+//    void calculateRisk (int temperature, int humidity ){
+//
+//        if (temperature < 32){
+//            btGo.setBackgroundResource(R.drawable.minimal_risk);
+//        }
+//
+//        if (temperature > 108){
+//            btGo.setBackgroundResource(R.drawable.very_high_risk);
+//        }
+//
+//        if ((temperature >= 32 && temperature <= 89) && (humidity >= 40 && humidity <= 45)){
+//
+//            btGo.setBackgroundResource(R.drawable.minimal_risk);
+//        }
+//
+//
+//
+//    }
 
     //MARK: Get data of cards from JSON response
     void setData(){
@@ -320,7 +333,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 tvCurrentHumidity.setText(humidity);
 
-                calculateRisk(Integer.parseInt(tvCurrentTemperature.getText().toString()), Integer.parseInt(tvCurrentHumidity.getText().toString()));
+                //calculateRisk(Integer.parseInt(tvCurrentTemperature.getText().toString()), Integer.parseInt(tvCurrentHumidity.getText().toString()));
 
                 dataTime = (JSONArray) object.getJSONArray("hourly_forecast");
 
