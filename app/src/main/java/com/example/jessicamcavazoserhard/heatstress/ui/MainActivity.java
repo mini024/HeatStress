@@ -243,7 +243,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 tvCurrentHumidity.setText(humidity);
 
-                tvCurrentHumidity.setText(humidity + " %");
+                tvCurrentHumidity.setText(humidity);
 
                 dataTime = (JSONArray) object.getJSONArray("hourly_forecast");
 
