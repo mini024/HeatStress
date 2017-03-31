@@ -41,10 +41,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private RecyclerView recyclerView;
     private WeatherCardAdapter adapter;
     private ArrayList<WeatherCard> listData;
-<<<<<<< HEAD
-=======
+
     JSONArray dataTime;
->>>>>>> fc4dab9ef54bba06f4479df65fb550786d26e120
+
 
     String Location;
     String humidity;
