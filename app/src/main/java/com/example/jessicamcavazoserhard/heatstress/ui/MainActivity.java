@@ -41,7 +41,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private RecyclerView recyclerView;
     private WeatherCardAdapter adapter;
     private ArrayList<WeatherCard> listData;
+
     JSONArray dataTime;
+
 
     String Location;
     String humidity;
@@ -140,7 +142,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         for (int i = 0; i< 12; i++){
-            WeatherCard dummy = new WeatherCard(getJSONString("hour", i, "FCTTIME") + ":00", getJSONString("condtion", i, " "), getJSONInt("english", i, "temp"), getJSONInt("humidity", i, " "));
+            WeatherCard dummy = new WeatherCard(getJSONString("hour", i, "FCTTIME") + ":00", getJSONString("condition", i, " "), getJSONInt("english", i, "temp"), getJSONInt("humidity", i, " "));
             listData.add(dummy);
         }
 
@@ -237,11 +239,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Log.d("Humedad","HUMEDAD EN SAN FRANCISCO : " + humidity);
 
                 tvCurrentTemperature.setText(temperature + " ºF");
-                tvCurrentHumidity.setText(humidity + " %");
+
+                tvCurrentHumidity.setText(humidity);
 
                 dataTime = (JSONArray) object.getJSONArray("hourly_forecast");
 
+
                 getData2();
+
 
             } catch (JSONException e){
                 Log.e("ERROR", e.getMessage(), e);
