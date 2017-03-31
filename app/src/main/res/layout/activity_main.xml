@@ -16,11 +16,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Enter Address"
-<<<<<<< HEAD
+
         android:maxLines="1"
-=======
         android:windowSoftInputMode="adjustPan"
->>>>>>> 04cb81f57ed195c7ee5bafd0ec9601f70f4c1da4
         android:textAlignment="center"
         android:textColor="@android:color/background_light"
         android:textColorHint="@color/textColorGray"

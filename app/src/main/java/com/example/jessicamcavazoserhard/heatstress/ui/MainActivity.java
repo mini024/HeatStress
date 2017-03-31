@@ -39,7 +39,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private RecyclerView recyclerView;
     private WeatherCardAdapter adapter;
     private ArrayList<WeatherCard> listData;
-    String humidity;
 
     String Location;
     String humidity;
@@ -186,8 +185,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Log.d("Humedad","HUMEDAD EN SAN FRANCISCO : " + humidity);
 
                 tvCurrentTemperature.setText(temperature + " ºF");
-                tvCurrentHumidity.setText(humidity + " %");
-
+                tvCurrentHumidity.setText(humidity);
 
 
             } catch (JSONException e){
