@@ -15,6 +15,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Enter Address"
+        android:maxLines="1"
         android:textAlignment="center"
         android:textColor="@android:color/background_light"
         android:textColorHint="@color/textColorGray" />
@@ -70,14 +71,6 @@
                 android:textSize="36sp"
                 android:layout_weight="1"/>
 
-            <TextView
-                android:id="@+id/textView_humidityPercentage"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="%"
-                android:textColor="@android:color/white"
-                android:textSize="36sp"
-                android:layout_weight="2"/>
         </LinearLayout>
         <LinearLayout
 
@@ -101,14 +94,6 @@
                 android:textSize="36sp"
                 android:layout_weight="1"/>
 
-            <TextView
-                android:id="@+id/textView_temperatureFahrenheit"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="ºF"
-                android:textColor="@android:color/white"
-                android:textSize="36sp"
-                android:layout_weight="2"/>
         </LinearLayout>
     </LinearLayout>
 

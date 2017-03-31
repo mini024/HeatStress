@@ -11,10 +11,15 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 import com.example.jessicamcavazoserhard.heatstress.R;
 import com.example.jessicamcavazoserhard.heatstress.adapter.WeatherCardAdapter;
 import com.example.jessicamcavazoserhard.heatstress.model.WeatherCard;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.JSONTokener;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -26,11 +31,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     ImageButton btGo;
     EditText etLocation;
+    TextView tvCurrentHumidity;
+    TextView tvCurrentTemperature;
     private RecyclerView recyclerView;
     private WeatherCardAdapter adapter;
     private ArrayList<WeatherCard> listData;
 
     String Location;
+    String humidity;
+    String temperature;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +60,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         btGo = (ImageButton) findViewById(R.id.imageButton_risk);
         etLocation = (EditText) findViewById(R.id.editText_address);
+
+        tvCurrentHumidity = (TextView) findViewById(R.id.textView_humidityValue);
+        tvCurrentTemperature = (TextView) findViewById(R.id.textView_temperatureValue);
+
         btGo.setOnClickListener(this);
     }
 
@@ -137,6 +150,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 response = "THERE WAS AN ERROR";
             }
             Log.i("INFO", response);
+
+            try {
+
+                JSONObject object = (JSONObject) new JSONTokener(response).nextValue();
+
+                humidity = object.getJSONObject("current_observation").getString("relative_humidity");
+                temperature = object.getJSONObject("current_observation").getString("temp_f");
+                Log.d("Humedad","HUMEDAD EN SAN FRANCISCO : " + humidity);
+
+                tvCurrentTemperature.setText(temperature + " ºF");
+                tvCurrentHumidity.setText(humidity + " %");
+
+
+            } catch (JSONException e){
+                Log.e("ERROR", e.getMessage(), e);
+            }
+
         }
     }
 
