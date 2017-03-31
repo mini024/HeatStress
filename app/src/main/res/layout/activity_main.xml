@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@drawable/background"
+    android:windowSoftInputMode="adjustPan"
     tools:context="com.example.jessicamcavazoserhard.heatstress.ui.MainActivity">
 
     <EditText
@@ -15,9 +16,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Enter Address"
+        android:windowSoftInputMode="adjustPan"
         android:textAlignment="center"
         android:textColor="@android:color/background_light"
-        android:textColorHint="@color/textColorGray" />
+        android:textColorHint="@color/textColorGray"
+        android:singleLine="true"/>
 
 
     <android.support.v7.widget.RecyclerView
@@ -48,6 +51,7 @@
         android:orientation="horizontal"
         android:weightSum="2"
         android:layout_above="@+id/seek_Call911"
+        android:windowSoftInputMode="adjustPan"
         android:layout_alignParentStart="true">
         <LinearLayout
             android:layout_width="match_parent"
@@ -114,6 +118,7 @@
 
     <SeekBar
         android:layout_weight="1"
+        android:windowSoftInputMode="adjustPan"
         android:id="@+id/seek_Call911"
         android:layout_width="match_parent"
         android:layout_height="35dp"
@@ -134,6 +139,7 @@
 
     <RelativeLayout
         android:layout_weight="1"
+        android:windowSoftInputMode="adjustPan"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="54dp"
