@@ -144,7 +144,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             listData.add(dummy);
         }
 
-        //adapter.setListData(listData);
         adapter.notifyDataSetChanged();
 
     }
