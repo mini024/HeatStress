@@ -9,7 +9,7 @@
     android:windowSoftInputMode="adjustPan"
     tools:context="com.example.jessicamcavazoserhard.heatstress.ui.MainActivity">
 
-    <EditText
+    <AutoCompleteTextView
         android:layout_weight="1"
         android:id="@+id/editText_address"
         style="@style/Widget.AppCompat.EditText"
