@@ -93,6 +93,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     InputMethodManager in = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     in.hideSoftInputFromWindow(etLocation.getApplicationWindowToken(),InputMethodManager.HIDE_NOT_ALWAYS);
                     new RetrieveWeatherForLocation().execute();
+                    // llamada a funcion que cambia el ring
                     return true;
                 default:
                     break;
@@ -129,6 +130,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         dummyData.add(dummy);
 
         return dummyData ;
+    }
+
+    void calculateRisk (int temperature, int humidity ){
+
+        if ((temperature > 32 && temperature < )
+
     }
 
     void getData2(){
