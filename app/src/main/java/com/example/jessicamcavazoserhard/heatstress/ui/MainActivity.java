@@ -129,7 +129,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         return dummyData ;
     }
 
-    ArrayList<WeatherCard> getData2(){
+    void getData2(){
+        listData.clear();
+
         try {
             x = (JSONObject) dataTime.get(0);
             Log.d("Humedad","HUMEDAD EN SAN FRANCISCO : " + x.getJSONObject("FCTTIME").getString("hour"));
@@ -137,35 +139,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Log.e("ERROR", e.getMessage(), e);
         }
 
-        ArrayList<WeatherCard> dummyData = new ArrayList<>();
-        WeatherCard dummy = new WeatherCard(getJSONString("hour", 0, "FCTTIME"), getJSONString("condtion", 0, " "), getJSONInt("english", 0, "temp"), getJSONInt("humidity", 0, " "));
-        dummyData.add(dummy);
-        dummy = new WeatherCard("12:00 PM","Sunny",80,20);
-        dummyData.add(dummy);
-        dummy = new WeatherCard("1:00 PM","Sunny",80,20);
-        dummyData.add(dummy);
-        dummy = new WeatherCard("2:00 PM","PartCloudy",70,30);
-        dummyData.add(dummy);
-        dummy = new WeatherCard("3:00 PM","PartCloudy",70,30);
-        dummyData.add(dummy);
-        dummy = new WeatherCard("4:00 PM","PartCloudy",70,50);
-        dummyData.add(dummy);
-        dummy = new WeatherCard("5:00 PM","Cloudy",60,60);
-        dummyData.add(dummy);
-        dummy = new WeatherCard("6:00 PM","Cloudy",60,60);
-        dummyData.add(dummy);
-        dummy = new WeatherCard("7:00 PM","Rainy",50,100);
-        dummyData.add(dummy);
-        dummy = new WeatherCard("8:00 PM","Rainy",50,100);
-        dummyData.add(dummy);
-        dummy = new WeatherCard("9:00 PM","Windy",50,90);
-        dummyData.add(dummy);
-        dummy = new WeatherCard("10:00 PM","Snowy",0,10);
-        dummyData.add(dummy);
+        for (int i = 0; i< 12; i++){
+            WeatherCard dummy = new WeatherCard(getJSONString("hour", i, "FCTTIME") + ":00", getJSONString("condtion", i, " "), getJSONInt("english", i, "temp"), getJSONInt("humidity", i, " "));
+            listData.add(dummy);
+        }
 
-        adapter.setListData(dummyData);
+        //adapter.setListData(listData);
+        adapter.notifyDataSetChanged();
 
-        return dummyData ;
     }
 
     String getJSONString(String key, int id, String keyObject){
@@ -261,7 +242,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 dataTime = (JSONArray) object.getJSONArray("hourly_forecast");
 
-                listData = getData2();
+                getData2();
 
             } catch (JSONException e){
                 Log.e("ERROR", e.getMessage(), e);
