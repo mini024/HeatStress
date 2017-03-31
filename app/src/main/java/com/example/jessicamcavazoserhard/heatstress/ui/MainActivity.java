@@ -15,11 +15,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.WrapperListAdapter;
 
 import com.example.jessicamcavazoserhard.heatstress.R;
 import com.example.jessicamcavazoserhard.heatstress.adapter.WeatherCardAdapter;
 import com.example.jessicamcavazoserhard.heatstress.model.WeatherCard;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
@@ -39,10 +41,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private RecyclerView recyclerView;
     private WeatherCardAdapter adapter;
     private ArrayList<WeatherCard> listData;
+<<<<<<< HEAD
+=======
+    JSONArray dataTime;
+>>>>>>> fc4dab9ef54bba06f4479df65fb550786d26e120
 
     String Location;
     String humidity;
     String temperature;
+    JSONObject x;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,8 +79,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         etLocation.setOnKeyListener(this);
     }
 
-
-
     @Override
     public void onClick(View v) {
         Intent i = new Intent(this , InfoActivity.class);
@@ -99,7 +104,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     ArrayList<WeatherCard> getData(){
         ArrayList<WeatherCard> dummyData = new ArrayList<>();
-        WeatherCard dummy = new WeatherCard("11:00 AM","Sunny",80,20);
+        WeatherCard dummy = new WeatherCard("11:00 AM","Sunny",0,0);
         dummyData.add(dummy);
         dummy = new WeatherCard("12:00 PM","Sunny",80,20);
         dummyData.add(dummy);
@@ -125,6 +130,76 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         dummyData.add(dummy);
 
         return dummyData ;
+    }
+
+    ArrayList<WeatherCard> getData2(){
+        try {
+            x = (JSONObject) dataTime.get(0);
+            Log.d("Humedad","HUMEDAD EN SAN FRANCISCO : " + x.getJSONObject("FCTTIME").getString("hour"));
+        } catch  (JSONException e){
+            Log.e("ERROR", e.getMessage(), e);
+        }
+
+        ArrayList<WeatherCard> dummyData = new ArrayList<>();
+        WeatherCard dummy = new WeatherCard(getJSONString("hour", 0, "FCTTIME"), getJSONString("condtion", 0, " "), getJSONInt("english", 0, "temp"), getJSONInt("humidity", 0, " "));
+        dummyData.add(dummy);
+        dummy = new WeatherCard("12:00 PM","Sunny",80,20);
+        dummyData.add(dummy);
+        dummy = new WeatherCard("1:00 PM","Sunny",80,20);
+        dummyData.add(dummy);
+        dummy = new WeatherCard("2:00 PM","PartCloudy",70,30);
+        dummyData.add(dummy);
+        dummy = new WeatherCard("3:00 PM","PartCloudy",70,30);
+        dummyData.add(dummy);
+        dummy = new WeatherCard("4:00 PM","PartCloudy",70,50);
+        dummyData.add(dummy);
+        dummy = new WeatherCard("5:00 PM","Cloudy",60,60);
+        dummyData.add(dummy);
+        dummy = new WeatherCard("6:00 PM","Cloudy",60,60);
+        dummyData.add(dummy);
+        dummy = new WeatherCard("7:00 PM","Rainy",50,100);
+        dummyData.add(dummy);
+        dummy = new WeatherCard("8:00 PM","Rainy",50,100);
+        dummyData.add(dummy);
+        dummy = new WeatherCard("9:00 PM","Windy",50,90);
+        dummyData.add(dummy);
+        dummy = new WeatherCard("10:00 PM","Snowy",0,10);
+        dummyData.add(dummy);
+
+        adapter.setListData(dummyData);
+
+        return dummyData ;
+    }
+
+    String getJSONString(String key, int id, String keyObject){
+        try {
+            x = (JSONObject) dataTime.get(id);
+            if (keyObject != " "){
+                return x.getJSONObject(keyObject).getString(key);
+            } else {
+                return x.getString(key);
+            }
+
+        } catch  (JSONException e){
+            Log.e("ERROR", e.getMessage(), e);
+        }
+        return " ";
+    }
+
+    int getJSONInt(String key, int id, String keyObject){
+        try {
+            x = (JSONObject) dataTime.get(id);
+            if (keyObject != " "){
+                return Integer.parseInt(x.getJSONObject(keyObject).getString(key));
+            } else {
+                return Integer.parseInt(x.getString(key));
+            }
+
+        } catch  (JSONException e){
+            Log.e("ERROR", e.getMessage(), e);
+        }
+
+        return 0;
     }
 
     //MARK - API Implementation
@@ -185,8 +260,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Log.d("Humedad","HUMEDAD EN SAN FRANCISCO : " + humidity);
 
                 tvCurrentTemperature.setText(temperature + " ºF");
+
                 tvCurrentHumidity.setText(humidity);
 
+                tvCurrentHumidity.setText(humidity + " %");
+
+                dataTime = (JSONArray) object.getJSONArray("hourly_forecast");
+
+
+                listData = getData2();
 
             } catch (JSONException e){
                 Log.e("ERROR", e.getMessage(), e);
