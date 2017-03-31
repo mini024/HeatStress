@@ -44,7 +44,7 @@ public class WeatherCardAdapter extends RecyclerView.Adapter<WeatherCardAdapter.
         switch (item.getsWeather()){
             case "Rainy": holder.weather_icon.setImageResource(R.drawable.rain);
                 break;
-            case "Sunny": holder.weather_icon.setImageResource(R.drawable.sun);
+            case "Clear": holder.weather_icon.setImageResource(R.drawable.sun);
                 break;
             case "PartCloudy": holder.weather_icon.setImageResource(R.drawable.sun_cloud);
                 break;
