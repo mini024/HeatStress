@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.widget.TextView;
 
 import com.example.jessicamcavazoserhard.heatstress.R;
+import com.example.jessicamcavazoserhard.heatstress.model.GifImageView;
 import com.example.jessicamcavazoserhard.heatstress.model.Subject;
 
 public class DetailActivity extends AppCompatActivity {
@@ -20,6 +21,10 @@ public class DetailActivity extends AppCompatActivity {
 
         tvtitle = (TextView) findViewById(R.id.textView_title);
         tvdescription = (TextView) findViewById(R.id.textView_description);
+
+        GifImageView gifImageView = (GifImageView) findViewById(R.id.GifImageView);
+        gifImageView.setGifImageResource(R.drawable.cpr);
+        //gifImageView.setGifImageUri(Uri);
 
         if (getIntent().getExtras() != null) {
             s = (Subject) getIntent().getSerializableExtra("subject");

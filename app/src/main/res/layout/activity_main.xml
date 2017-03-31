@@ -6,18 +6,25 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@drawable/background"
+    android:windowSoftInputMode="adjustPan"
     tools:context="com.example.jessicamcavazoserhard.heatstress.ui.MainActivity">
 
-    <EditText
+    <AutoCompleteTextView
         android:layout_weight="1"
         android:id="@+id/editText_address"
         style="@style/Widget.AppCompat.EditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Enter Address"
+
+
+        android:maxLines="1"
+
+        android:windowSoftInputMode="adjustPan"
         android:textAlignment="center"
         android:textColor="@android:color/background_light"
-        android:textColorHint="@color/textColorGray" />
+        android:textColorHint="@color/textColorGray"
+        android:singleLine="true" />
 
 
     <android.support.v7.widget.RecyclerView
@@ -48,6 +55,7 @@
         android:orientation="horizontal"
         android:weightSum="2"
         android:layout_above="@+id/seek_Call911"
+        android:windowSoftInputMode="adjustPan"
         android:layout_alignParentStart="true">
         <LinearLayout
             android:layout_width="match_parent"
@@ -70,14 +78,6 @@
                 android:textSize="36sp"
                 android:layout_weight="1"/>
 
-            <TextView
-                android:id="@+id/textView_humidityPercentage"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="%"
-                android:textColor="@android:color/white"
-                android:textSize="36sp"
-                android:layout_weight="2"/>
         </LinearLayout>
         <LinearLayout
 
@@ -101,19 +101,12 @@
                 android:textSize="36sp"
                 android:layout_weight="1"/>
 
-            <TextView
-                android:id="@+id/textView_temperatureFahrenheit"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="ºF"
-                android:textColor="@android:color/white"
-                android:textSize="36sp"
-                android:layout_weight="2"/>
         </LinearLayout>
     </LinearLayout>
 
     <SeekBar
         android:layout_weight="1"
+        android:windowSoftInputMode="adjustPan"
         android:id="@+id/seek_Call911"
         android:layout_width="match_parent"
         android:layout_height="35dp"
@@ -134,6 +127,7 @@
 
     <RelativeLayout
         android:layout_weight="1"
+        android:windowSoftInputMode="adjustPan"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="54dp"
