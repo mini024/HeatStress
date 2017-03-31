@@ -11,6 +11,8 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -32,23 +34,26 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener, View.OnKeyListener{
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, View.OnKeyListener {
 
-    ImageButton btGo;
-    EditText etLocation;
-    TextView tvCurrentHumidity;
-    TextView tvCurrentTemperature;
+    private static final String[] COUNTRIES = new String[] {
+            "Belgium", "France", "Italy", "Germany", "Spain"
+    };
+
     private RecyclerView recyclerView;
     private WeatherCardAdapter adapter;
     private ArrayList<WeatherCard> listData;
 
+    ImageButton btGo;
+    AutoCompleteTextView etLocation;
+    TextView tvCurrentHumidity;
+    TextView tvCurrentTemperature;
     JSONArray dataTime;
-
-
     String Location;
     String humidity;
     String temperature;
     JSONObject x;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,22 +73,29 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         recyclerView.setAdapter(adapter);
 
         btGo = (ImageButton) findViewById(R.id.imageButton_risk);
-        etLocation = (EditText) findViewById(R.id.editText_address);
 
         tvCurrentHumidity = (TextView) findViewById(R.id.textView_humidityValue);
         tvCurrentTemperature = (TextView) findViewById(R.id.textView_temperatureValue);
 
         btGo.setOnClickListener(this);
 
+
+        //Auto Complete Text View
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_dropdown_item_1line, COUNTRIES);
+        etLocation = (AutoCompleteTextView) findViewById(R.id.editText_address);
+        etLocation.setAdapter(adapter);
         etLocation.setOnKeyListener(this);
     }
 
+    //MARK: OnClick on button image(only button) go to InfoActivity
     @Override
     public void onClick(View v) {
         Intent i = new Intent(this , InfoActivity.class);
         startActivity(i);
     }
 
+    //MARK: Detect enter to hide keyboard and get data.
     @Override
     public boolean onKey(View v, int keyCode, KeyEvent event) {
         if (event.getAction() == KeyEvent.ACTION_DOWN) {
@@ -101,36 +113,38 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         return false;
     }
 
+    //MARK: Get false Data while getting real data
     ArrayList<WeatherCard> getData(){
         ArrayList<WeatherCard> dummyData = new ArrayList<>();
-        WeatherCard dummy = new WeatherCard("11:00 AM","Sunny",0,0);
+        WeatherCard dummy = new WeatherCard("11:00 AM"," ",0,0);
         dummyData.add(dummy);
-        dummy = new WeatherCard("12:00 PM","Sunny",80,20);
+        dummy = new WeatherCard("12:00 PM"," ",0,0);
         dummyData.add(dummy);
-        dummy = new WeatherCard("1:00 PM","Sunny",80,20);
+        dummy = new WeatherCard("1:00 PM"," ",0,0);
         dummyData.add(dummy);
-        dummy = new WeatherCard("2:00 PM","PartCloudy",70,30);
+        dummy = new WeatherCard("2:00 PM"," ",0,0);
         dummyData.add(dummy);
-        dummy = new WeatherCard("3:00 PM","PartCloudy",70,30);
+        dummy = new WeatherCard("3:00 PM"," ",0,0);
         dummyData.add(dummy);
-        dummy = new WeatherCard("4:00 PM","PartCloudy",70,50);
+        dummy = new WeatherCard("4:00 PM"," ",0,0);
         dummyData.add(dummy);
-        dummy = new WeatherCard("5:00 PM","Cloudy",60,60);
+        dummy = new WeatherCard("5:00 PM"," ",0,0);
         dummyData.add(dummy);
-        dummy = new WeatherCard("6:00 PM","Cloudy",60,60);
+        dummy = new WeatherCard("6:00 PM"," ",0,0);
         dummyData.add(dummy);
-        dummy = new WeatherCard("7:00 PM","Rainy",50,100);
+        dummy = new WeatherCard("7:00 PM"," ",0,0);
         dummyData.add(dummy);
-        dummy = new WeatherCard("8:00 PM","Rainy",50,100);
+        dummy = new WeatherCard("8:00 PM"," ",0,0);
         dummyData.add(dummy);
-        dummy = new WeatherCard("9:00 PM","Windy",50,90);
+        dummy = new WeatherCard("9:00 PM"," ",0,0);
         dummyData.add(dummy);
-        dummy = new WeatherCard("10:00 PM","Snowy",0,10);
+        dummy = new WeatherCard("10:00 PM"," ",0,0);
         dummyData.add(dummy);
 
         return dummyData ;
     }
 
+    //MARK: Get data of cards from JSON response
     void getData2(){
         listData.clear();
 
@@ -147,7 +161,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         adapter.notifyDataSetChanged();
-
     }
 
     String getJSONString(String key, int id, String keyObject){
