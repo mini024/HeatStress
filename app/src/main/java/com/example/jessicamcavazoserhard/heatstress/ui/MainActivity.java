@@ -288,7 +288,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             // Do some validation here
             Location = Location.replaceAll("\\s+", "_");
-            Log.d("Conecion","String transformed: " + Location);
+            Log.d("Conexion","String transformed: " + Location);
 
             try {
                 URL url = new URL("http://api.wunderground.com/api/25d0f02c485109f2/conditions/hourly/q/CA/"+Location+".json");
@@ -336,7 +336,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 //calculateRisk(Integer.parseInt(tvCurrentTemperature.getText().toString()), Integer.parseInt(tvCurrentHumidity.getText().toString()));
 
                 dataTime = (JSONArray) object.getJSONArray("hourly_forecast");
-
 
                 setData();
 
