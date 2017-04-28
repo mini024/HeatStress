@@ -29,6 +29,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -58,16 +60,98 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, View.OnKeyListener {
 
-    private static final String[] COUNTRIES = new String[]{
-            "Belgium", "France", "Italy", "Germany", "Spain"
+    String[] Cities = new String[]{
+            "Monterrey, Nuevo Leon", "San Francisco , California", "Los Angeles , California", "Germany", "Spain"
     };
+
+    //MARK - States
+    public static final Map<String, String> states;
+    static {
+        states = new HashMap<String, String>();
+        states.put("Alabama","AL");
+        states.put("Alaska","AK");
+        states.put("Alberta","AB");
+        states.put("American Samoa","AS");
+        states.put("Arizona","AZ");
+        states.put("Arkansas","AR");
+        states.put("Armed Forces (AE)","AE");
+        states.put("Armed Forces Americas","AA");
+        states.put("Armed Forces Pacific","AP");
+        states.put("British Columbia","BC");
+        states.put("California","CA");
+        states.put("Colorado","CO");
+        states.put("Connecticut","CT");
+        states.put("Delaware","DE");
+        states.put("District Of Columbia","DC");
+        states.put("Florida","FL");
+        states.put("Georgia","GA");
+        states.put("Guam","GU");
+        states.put("Hawaii","HI");
+        states.put("Idaho","ID");
+        states.put("Illinois","IL");
+        states.put("Indiana","IN");
+        states.put("Iowa","IA");
+        states.put("Kansas","KS");
+        states.put("Kentucky","KY");
+        states.put("Louisiana","LA");
+        states.put("Maine","ME");
+        states.put("Manitoba","MB");
+        states.put("Maryland","MD");
+        states.put("Massachusetts","MA");
+        states.put("Michigan","MI");
+        states.put("Minnesota","MN");
+        states.put("Mississippi","MS");
+        states.put("Missouri","MO");
+        states.put("Montana","MT");
+        states.put("Nebraska","NE");
+        states.put("Nevada","NV");
+        states.put("New Brunswick","NB");
+        states.put("New Hampshire","NH");
+        states.put("New Jersey","NJ");
+        states.put("New Mexico","NM");
+        states.put("New York","NY");
+        states.put("Newfoundland","NF");
+        states.put("North Carolina","NC");
+        states.put("North Dakota","ND");
+        states.put("Northwest Territories","NT");
+        states.put("Nova Scotia","NS");
+        states.put("Nunavut","NU");
+        states.put("Ohio","OH");
+        states.put("Oklahoma","OK");
+        states.put("Ontario","ON");
+        states.put("Oregon","OR");
+        states.put("Pennsylvania","PA");
+        states.put("Prince Edward Island","PE");
+        states.put("Puerto Rico","PR");
+        states.put("Quebec","QC");
+        states.put("Rhode Island","RI");
+        states.put("Saskatchewan","SK");
+        states.put("South Carolina","SC");
+        states.put("South Dakota","SD");
+        states.put("Tennessee","TN");
+        states.put("Texas","TX");
+        states.put("Utah","UT");
+        states.put("Vermont","VT");
+        states.put("Virgin Islands","VI");
+        states.put("Virginia","VA");
+        states.put("Washington","WA");
+        states.put("West Virginia","WV");
+        states.put("Wisconsin","WI");
+        states.put("Wyoming","WY");
+        states.put("Yukon Territory","YT");
+    }
 
     private RecyclerView recyclerView;
     private WeatherCardAdapter adapter;
     private ArrayList<WeatherCard> listData;
+    ArrayAdapter<String> adapterAutoComplete;
+
 
     ImageButton btGo;
     AutoCompleteTextView etLocation;
@@ -157,14 +241,41 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         });
 
         //Auto Complete Text View
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_dropdown_item_1line, COUNTRIES);
+        adapterAutoComplete = new ArrayAdapter<String>(this,
+                android.R.layout.simple_dropdown_item_1line, Cities);
+        adapterAutoComplete.setNotifyOnChange(true);
         etLocation = (AutoCompleteTextView) findViewById(R.id.editText_address);
-        etLocation.setAdapter(adapter);
+        etLocation.setAdapter(adapterAutoComplete);
         etLocation.setOnKeyListener(this);
+        etLocation.setThreshold(5);
+        etLocation.addTextChangedListener(textWatcher);
     }
 
-    //MARK: OnClick on button image(only button) go to InfoActivity
+    //MARK: Text Watcher, detect if text changed.
+    private TextWatcher textWatcher = new TextWatcher() {
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            if (start ==  4) {
+                //MARK: Get Weather
+                InputMethodManager in = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                in.hideSoftInputFromWindow(etLocation.getApplicationWindowToken(),InputMethodManager.HIDE_NOT_ALWAYS);
+                new RetrieveAutoComplete().execute();
+            }
+        }
+
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+
+        }
+    };
+
+    //MARK: OnClick on button image and showLocation
     @Override
     public void onClick(View v) {
         switch (v.getId()){
@@ -214,6 +325,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             switch (keyCode) {
                 case KeyEvent.KEYCODE_DPAD_CENTER:
                 case KeyEvent.KEYCODE_ENTER:
+                    //MARK: Get Weather
                     InputMethodManager in = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     in.hideSoftInputFromWindow(etLocation.getApplicationWindowToken(),InputMethodManager.HIDE_NOT_ALWAYS);
                     new RetrieveWeatherForLocation().execute();
@@ -295,6 +407,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         adapter.notifyDataSetChanged();
     }
 
+    //MARK: Get data from json and change to data type
     String getJSONString(String key, int id, String keyObject){
         try {
             x = (JSONObject) dataTime.get(id);
@@ -326,6 +439,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         return 0;
     }
 
+
     //MARK - API Implementation
     // IMPLEMENTATION ASYNCTASK FOR WEATHER API REQUEST
     // KEY - 25d0f02c485109f2
@@ -340,11 +454,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         protected String doInBackground(Void... urls) {
 
             // Do some validation here
+            String state = Location.substring(Location.indexOf(","));
+            Location = Location.replace(state, "");
+            state = state.replace(", ", "");
             Location = Location.replaceAll("\\s+", "_");
             Log.d("Conexion","String transformed: " + Location);
 
             try {
-                URL url = new URL("http://api.wunderground.com/api/25d0f02c485109f2/conditions/hourly/q/CA/"+Location+".json");
+                URL url = new URL("http://api.wunderground.com/api/25d0f02c485109f2/conditions/hourly/q/"+ states.get(state) + "/" +Location+".json");
                 HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
                 Log.d("Connecion","Retrieving weather from: " + url);
                 try {
@@ -394,6 +511,82 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 setData();
 
+
+            } catch (JSONException e){
+                Log.e("ERROR", e.getMessage(), e);
+            }
+
+        }
+    }
+
+
+    //MARK - API Implementation for AutoComplete
+    class RetrieveAutoComplete extends AsyncTask<Void, Void, String> {
+
+        private Exception exception;
+
+        protected void onPreExecute() {
+            Location = etLocation.getText().toString();
+        }
+
+        protected String doInBackground(Void... urls) {
+
+            // Do some validation here
+            Location = Location.replaceAll("\\s+", "%20");
+            Log.d("Conexion","String transformed: " + Location);
+
+            http://autocomplete.wunderground.com/aq?query=query
+            try {
+                URL url = new URL("http://autocomplete.wunderground.com/aq?query=" + Location);
+                HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+                Log.d("Connecion","Retrieving weather from: " + url);
+                try {
+                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+                    StringBuilder stringBuilder = new StringBuilder();
+                    String line;
+                    while ((line = bufferedReader.readLine()) != null) {
+                        stringBuilder.append(line).append("\n");
+                    }
+                    bufferedReader.close();
+                    return stringBuilder.toString();
+                }
+                finally{
+                    urlConnection.disconnect();
+                }
+            }
+            catch(Exception e) {
+                Log.e("ERROR", e.getMessage(), e);
+                return null;
+            }
+        }
+
+        protected void onPostExecute(String response) {
+            if(response == null) {
+                response = "THERE WAS AN ERROR";
+            }
+            Log.i("INFO", response);
+
+            try {
+
+                JSONObject object = (JSONObject) new JSONTokener(response).nextValue();
+
+                JSONArray results = object.getJSONArray("RESULTS");
+
+                //Arrays.fill( Cities, results.length() );
+                Cities = new String[results.length()];
+
+                for (int i = 0; i< results.length(); i++){
+                    JSONObject CityObject = results.getJSONObject(i);
+                    String city = CityObject.getString("name");
+                    Cities[i] = city;
+                }
+
+                //Update Adapter
+                adapterAutoComplete = new ArrayAdapter<String>(MainActivity.this,
+                        android.R.layout.simple_dropdown_item_1line, Cities);
+
+                etLocation.setAdapter(adapterAutoComplete);
+                adapterAutoComplete.notifyDataSetChanged();
 
             } catch (JSONException e){
                 Log.e("ERROR", e.getMessage(), e);
