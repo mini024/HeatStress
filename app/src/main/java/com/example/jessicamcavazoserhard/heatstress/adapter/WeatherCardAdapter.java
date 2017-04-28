@@ -19,12 +19,16 @@
 package com.example.jessicamcavazoserhard.heatstress.adapter;
 
 import android.content.Context;
+import android.content.res.Resources;
+import android.graphics.Color;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.jessicamcavazoserhard.heatstress.R;
@@ -41,6 +45,8 @@ public class WeatherCardAdapter extends RecyclerView.Adapter<WeatherCardAdapter.
 
     private List<WeatherCard> listData;
     private LayoutInflater inflater;
+
+    int card_green, card_red, card_orange, card_yellow;
 
     public WeatherCardAdapter(List<WeatherCard> listData, Context c){
         inflater = LayoutInflater.from(c);
@@ -74,6 +80,14 @@ public class WeatherCardAdapter extends RecyclerView.Adapter<WeatherCardAdapter.
                 break;
         }
 
+        if (item.getiTemperature() >= 80){
+            holder.card.setBackgroundColor(card_orange);
+        } else if (item.getiTemperature() < 80) {
+            holder.card.setBackgroundColor(card_yellow);
+        }
+
+
+
         holder.temp_icon.setImageResource(R.drawable.temp);
         holder.hum_icon.setImageResource(R.drawable.drops);
     }
@@ -93,6 +107,7 @@ public class WeatherCardAdapter extends RecyclerView.Adapter<WeatherCardAdapter.
         ImageView weather_icon, temp_icon, hum_icon;
         TextView hour, temp, hum;
         View container;
+        RelativeLayout card;
 
         public WeatherCardHolder(View itemView) {
             super(itemView);
@@ -104,7 +119,15 @@ public class WeatherCardAdapter extends RecyclerView.Adapter<WeatherCardAdapter.
             temp = (TextView) itemView.findViewById(R.id.tv_temp_card);
             hum = (TextView) itemView.findViewById(R.id.tv_hum_card);
 
+            card = (RelativeLayout)itemView.findViewById(R.id.card);
+
             container = (View)itemView.findViewById(R.id.cont_item_root);
+
+            card_green = Color.parseColor("#AC7CAD6C");
+            card_orange = Color.parseColor("#B7DA7736");
+            card_red = Color.parseColor("#ADFC2D16");
+            card_yellow = Color.parseColor("#B6D0AE26");
+
         }
 
     }

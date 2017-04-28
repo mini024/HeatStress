@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
@@ -24,8 +25,20 @@
         android:textAlignment="center"
         android:textColor="@android:color/background_light"
         android:textColorHint="?attr/editTextColor"
+        android:visibility="visible"
         android:windowSoftInputMode="adjustPan" />
 
+
+    <TextView
+        android:id="@+id/textView_location"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/radioButton_currentLocation"
+        android:layout_centerHorizontal="true"
+        android:text="Location"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:visibility="gone" />
 
     <android.support.v7.widget.RecyclerView
         android:layout_weight="1"
@@ -35,18 +48,14 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true" />
 
-    <RadioButton
-        android:layout_weight="1"
-        android:id="@+id/radioButton_currentLocation"
+    <CheckBox
+        android:id="@+id/checkBox2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:checked="false"
-        android:text="Use current location"
-        android:textColor="@android:color/background_light"
-        android:buttonTint="@android:color/background_light"
         android:layout_below="@+id/editText_address"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:text="CheckBox"
+        android:visibility="visible" />
 
     <LinearLayout
         android:layout_weight="1"
@@ -56,7 +65,8 @@
         android:weightSum="2"
         android:layout_above="@+id/seek_Call911"
         android:windowSoftInputMode="adjustPan"
-        android:layout_alignParentStart="true">
+        android:layout_alignParentStart="true"
+        android:id="@+id/linearLayout">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -114,45 +124,54 @@
         android:layout_above="@+id/rec_view_main"
         android:layout_alignParentStart="true" />
 
-    <TextView
-        android:layout_weight="1"
-        android:id="@+id/textView_now"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:textColor="@android:color/white"
-        android:text="Now"
-        android:layout_below="@+id/radioButton_currentLocation"
-        android:layout_centerHorizontal="true" />
-
     <RelativeLayout
         android:layout_weight="1"
         android:windowSoftInputMode="adjustPan"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="54dp"
-        android:layout_below="@+id/textView_now"
-        android:layout_alignParentStart="true">
+        android:layout_below="@+id/checkBox2"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="43dp">
+
+        <TextView
+            android:id="@+id/textView_now"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:text="Now"
+            android:textColor="@android:color/white"
+            android:textSize="18sp" />
 
         <TextView
             android:id="@+id/textView_risk"
             android:text="Minimal risk"
             android:textColor="@android:color/white"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/imageButton_risk"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="63dp" />
 
         <ImageButton
             android:id="@+id/imageButton_risk"
             android:layout_width="150dp"
+            android:layout_height="150dp"
             android:background="@android:color/transparent"
             android:contentDescription="Risk image Button"
+            android:cropToPadding="false"
             android:scaleType="fitXY"
             android:src="@drawable/riskimage"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:layout_height="150dp" />
+            android:layout_below="@+id/textView_now"
+            android:layout_centerHorizontal="true" />
     </RelativeLayout>
+
+    <ImageButton
+        android:id="@+id/imageButton_showLocation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:visibility="gone"
+        app:srcCompat="@android:drawable/arrow_down_float" />
 
 </RelativeLayout>

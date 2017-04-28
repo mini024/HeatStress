@@ -36,6 +36,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
@@ -78,6 +79,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     String temperature;
     JSONObject x;
     SeekBar sbCall;
+    ImageButton btShowLocation;
+    TextView tvLocation;
+    CheckBox cbCurrentLocation;
     int sbprogress;
 
 
@@ -104,6 +108,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         tvCurrentTemperature = (TextView) findViewById(R.id.textView_temperatureValue);
 
         btGo.setOnClickListener(this);
+
+        btShowLocation = (ImageButton) findViewById(R.id.imageButton_showLocation);
+        btShowLocation.setOnClickListener(this);
+
+        tvLocation = (TextView) findViewById(R.id.textView_location);
+
+        cbCurrentLocation = (CheckBox) findViewById(R.id.checkBox2);
 
         //MARK: MAKING CALL
         sbCall = (SeekBar) findViewById(R.id.seek_Call911);
@@ -156,8 +167,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     //MARK: OnClick on button image(only button) go to InfoActivity
     @Override
     public void onClick(View v) {
-        Intent i = new Intent(this , InfoActivity.class);
-        startActivity(i);
+        switch (v.getId()){
+            case R.id.imageButton_risk:
+                Intent i = new Intent(this , InfoActivity.class);
+                startActivity(i);
+                break;
+            case R.id.imageButton_showLocation:
+                ShowLocation();
+                break;
+        }
+
     }
 
     @Override
@@ -173,6 +192,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //Restore state here
     }
 
+    void HideLocation() {
+        etLocation.setVisibility(View.GONE);
+        cbCurrentLocation.setVisibility(View.GONE);
+        btShowLocation.setVisibility(View.VISIBLE);
+        tvLocation.setVisibility(View.VISIBLE);
+        tvLocation.setText(etLocation.getText());
+    }
+
+    void ShowLocation() {
+        etLocation.setVisibility(View.VISIBLE);
+        btShowLocation.setVisibility(View.GONE);
+        cbCurrentLocation.setVisibility(View.VISIBLE);
+        tvLocation.setVisibility(View.GONE);
+    }
+
     //MARK: Detect enter to hide keyboard and get data.
     @Override
     public boolean onKey(View v, int keyCode, KeyEvent event) {
@@ -183,6 +217,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     InputMethodManager in = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     in.hideSoftInputFromWindow(etLocation.getApplicationWindowToken(),InputMethodManager.HIDE_NOT_ALWAYS);
                     new RetrieveWeatherForLocation().execute();
+                    HideLocation();
                     return true;
                 default:
                     break;
