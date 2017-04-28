@@ -46,6 +46,7 @@ import android.widget.Toast;
 import android.widget.TextView;
 import android.widget.WrapperListAdapter;
 
+import com.example.jessicamcavazoserhard.heatstress.GlobalData;
 import com.example.jessicamcavazoserhard.heatstress.R;
 import com.example.jessicamcavazoserhard.heatstress.adapter.WeatherCardAdapter;
 import com.example.jessicamcavazoserhard.heatstress.model.WeatherCard;
@@ -152,6 +153,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private ArrayList<WeatherCard> listData;
     ArrayAdapter<String> adapterAutoComplete;
 
+    //Instance of global
+    GlobalData global;
 
     ImageButton btGo;
     AutoCompleteTextView etLocation;
@@ -373,6 +376,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         return dummyData ;
     }
 
+
     void calculateRisk (double temperature, String humidity ){
 
         humidity = humidity.replaceAll("%", "");
@@ -380,7 +384,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
         double heatIndex = c1 + c2*temperature +c3*Rhumidity + c4*temperature*Rhumidity + c5*(Math.pow(temperature,2)) + c6*(Math.pow(Rhumidity,2)) + c7*(Math.pow(temperature,2))*Rhumidity + c8*temperature*(Math.pow(Rhumidity,2)) + c9*(Math.pow(temperature,2))*(Math.pow(Rhumidity,2)) + c10*(Math.pow(temperature,3)) + c11*(Math.pow(Rhumidity,3)) + c12*(Math.pow(temperature,3))*Rhumidity + c13*temperature*(Math.pow(Rhumidity,3)) + c14*(Math.pow(temperature,3))*(Math.pow(Rhumidity,2)) + c15*(Math.pow(temperature,2))*(Math.pow(Rhumidity,3)) + c15*(Math.pow(temperature,3))*(Math.pow(Rhumidity,3));
-
 
         if (heatIndex >= 126){
 
@@ -406,8 +409,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             tvCurrentRisk.setText("Minimal Risk");
 
         }
-
-
 
     }
 

@@ -31,6 +31,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.example.jessicamcavazoserhard.heatstress.GlobalData;
 import com.example.jessicamcavazoserhard.heatstress.R;
 import com.example.jessicamcavazoserhard.heatstress.model.WeatherCard;
 
@@ -45,7 +46,11 @@ public class WeatherCardAdapter extends RecyclerView.Adapter<WeatherCardAdapter.
 
     private List<WeatherCard> listData;
     private LayoutInflater inflater;
+    //Instance of global
+    GlobalData global;
+    RelativeLayout card;
 
+    final double c1=16.923,c2=0.185212,c3=5.37941,c4=-0.100254,c5=0.00941695,c6=0.00728898,c7=0.000345372,c8=-0.000814971,c9=0.0000102102,c10=-0.000038646,c11=0.0000291583,c12=0.00000142721,c13=0.000000197483,c14=-0.0000000218429,c15=0.000000000843296,c16=-0.0000000000481975;
     int card_green, card_red, card_orange, card_yellow;
 
     public WeatherCardAdapter(List<WeatherCard> listData, Context c){
@@ -80,11 +85,35 @@ public class WeatherCardAdapter extends RecyclerView.Adapter<WeatherCardAdapter.
                 break;
         }
 
-        if (item.getiTemperature() >= 80){
-            holder.card.setBackgroundColor(card_orange);
-        } else if (item.getiTemperature() < 80) {
-            holder.card.setBackgroundColor(card_yellow);
+        double temperature = item.getiTemperature();
+        String humidity = String.valueOf(item.getiHumidity());
+
+        if (item.getiTemperature() != 0 && String.valueOf(item.getiHumidity()) != null){
+            humidity = humidity.replaceAll("%", "");
+            int Rhumidity = Integer.parseInt(humidity);
+            double heatIndex = c1 + c2*temperature +c3*Rhumidity + c4*temperature*Rhumidity + c5*(Math.pow(temperature,2)) + c6*(Math.pow(Rhumidity,2)) + c7*(Math.pow(temperature,2))*Rhumidity + c8*temperature*(Math.pow(Rhumidity,2)) + c9*(Math.pow(temperature,2))*(Math.pow(Rhumidity,2)) + c10*(Math.pow(temperature,3)) + c11*(Math.pow(Rhumidity,3)) + c12*(Math.pow(temperature,3))*Rhumidity + c13*temperature*(Math.pow(Rhumidity,3)) + c14*(Math.pow(temperature,3))*(Math.pow(Rhumidity,2)) + c15*(Math.pow(temperature,2))*(Math.pow(Rhumidity,3)) + c15*(Math.pow(temperature,3))*(Math.pow(Rhumidity,3));
+
+            if (heatIndex >= 126){
+                //Red
+                card.setBackgroundColor(card_red);
+            }
+
+            if (heatIndex >= 104 && heatIndex <=125){
+                //Orange
+                card.setBackgroundColor(card_orange);
+            }
+
+            if (heatIndex >= 91 && heatIndex <=103){
+                //Yellow
+                card.setBackgroundColor(card_yellow);
+            }
+
+            if (heatIndex <=90){
+                //Green
+                card.setBackgroundColor(card_green);
+            }
         }
+
 
 
 
@@ -107,7 +136,6 @@ public class WeatherCardAdapter extends RecyclerView.Adapter<WeatherCardAdapter.
         ImageView weather_icon, temp_icon, hum_icon;
         TextView hour, temp, hum;
         View container;
-        RelativeLayout card;
 
         public WeatherCardHolder(View itemView) {
             super(itemView);
