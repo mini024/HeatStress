@@ -10,21 +10,21 @@
     tools:context="com.example.jessicamcavazoserhard.heatstress.ui.MainActivity">
 
     <AutoCompleteTextView
-        android:layout_weight="1"
         android:id="@+id/editText_address"
         style="@style/Widget.AppCompat.EditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_weight="1"
         android:hint="Enter Address"
 
 
         android:maxLines="1"
 
-        android:windowSoftInputMode="adjustPan"
+        android:singleLine="true"
         android:textAlignment="center"
         android:textColor="@android:color/background_light"
-        android:textColorHint="@color/textColorGray"
-        android:singleLine="true" />
+        android:textColorHint="?attr/editTextColor"
+        android:windowSoftInputMode="adjustPan" />
 
 
     <android.support.v7.widget.RecyclerView

@@ -326,6 +326,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 humidity = object.getJSONObject("current_observation").getString("relative_humidity");
 
+                Log.d("Query", object.toString());
+
                 temperature = object.getJSONObject("current_observation").getString("temp_f");
                 Log.d("Humedad","HUMEDAD EN SAN FRANCISCO : " + humidity);
 
