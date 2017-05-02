@@ -33,7 +33,6 @@
         android:id="@+id/textView_location"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/radioButton_currentLocation"
         android:layout_centerHorizontal="true"
         android:text="Location"
         android:textSize="24sp"
@@ -124,47 +123,6 @@
         android:layout_above="@+id/rec_view_main"
         android:layout_alignParentStart="true" />
 
-    <RelativeLayout
-        android:layout_weight="1"
-        android:windowSoftInputMode="adjustPan"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/checkBox2"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="43dp">
-
-        <TextView
-            android:id="@+id/textView_now"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:text="Now"
-            android:textColor="@android:color/white"
-            android:textSize="18sp" />
-
-        <TextView
-            android:id="@+id/textView_risk"
-            android:text="Minimal risk"
-            android:textColor="@android:color/white"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignTop="@+id/imageButton_risk"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="63dp" />
-
-        <ImageButton
-            android:id="@+id/imageButton_risk"
-            android:layout_width="150dp"
-            android:layout_height="150dp"
-            android:background="@android:color/transparent"
-            android:contentDescription="Risk image Button"
-            android:cropToPadding="false"
-            android:scaleType="fitXY"
-            android:src="@drawable/riskimage"
-            android:layout_below="@+id/textView_now"
-            android:layout_centerHorizontal="true" />
-    </RelativeLayout>
-
     <ImageButton
         android:id="@+id/imageButton_showLocation"
         android:layout_width="wrap_content"
@@ -173,5 +131,135 @@
         android:layout_alignParentTop="true"
         android:visibility="gone"
         app:srcCompat="@android:drawable/arrow_down_float" />
+
+    <LinearLayout
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/linearLayout"
+        android:layout_centerHorizontal="true">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/checkBox2"
+            android:layout_gravity="fill_vertical"
+            android:layout_marginTop="43dp"
+            android:layout_weight="1"
+            android:gravity="center_vertical|center_horizontal"
+            android:windowSoftInputMode="adjustPan">
+
+            <TextView
+                android:id="@+id/textView_now"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:text="Now"
+                android:textColor="@android:color/white"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/textView_risk"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@+id/imageButton_risk"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="63dp"
+                android:text="Minimal risk"
+                android:textColor="@android:color/white" />
+
+            <ImageButton
+                android:id="@+id/imageButton_risk"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:layout_below="@+id/textView_now"
+                android:layout_centerHorizontal="true"
+                android:background="@android:color/transparent"
+                android:contentDescription="Risk image Button"
+                android:cropToPadding="false"
+                android:scaleType="fitXY"
+                android:src="@drawable/riskimage" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/view_main_max"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="11dp"
+                android:layout_weight="1"
+                android:text="Max"
+                android:textColor="@android:color/background_light"
+                android:textSize="18sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/linearLayout2"
+                android:layout_marginTop="21dp"
+                android:layout_weight="1"
+                android:orientation="horizontal"
+                android:weightSum="5">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:contentDescription="humidity"
+                    android:src="@drawable/water" />
+
+                <TextView
+                    android:id="@+id/textView_humidityMax"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="--"
+                    android:textColor="@android:color/white"
+                    android:textSize="36sp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+
+                android:id="@+id/linearLayout2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginTop="38dp"
+                android:layout_weight="1"
+                android:orientation="horizontal"
+                android:weightSum="5">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:contentDescription="humidity"
+                    android:src="@drawable/temperature" />
+
+                <TextView
+                    android:id="@+id/textView_temperatureMax"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="--"
+                    android:textColor="@android:color/white"
+                    android:textSize="36sp" />
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+    </LinearLayout>
 
 </RelativeLayout>

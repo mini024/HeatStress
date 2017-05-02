@@ -39,6 +39,7 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
@@ -62,8 +63,10 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.PriorityQueue;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, View.OnKeyListener {
 
@@ -161,6 +164,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     TextView tvCurrentRisk;
     TextView tvCurrentHumidity;
     TextView tvCurrentTemperature;
+    TextView tvMaxHumidity;
+    TextView tvMaxTemp;
+    View vMax;
     JSONArray dataTime;
     String Location;
     String humidity;
@@ -174,6 +180,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     final double c1=16.923,c2=0.185212,c3=5.37941,c4=-0.100254,c5=0.00941695,c6=0.00728898,c7=0.000345372,c8=-0.000814971,c9=0.0000102102,c10=-0.000038646,c11=0.0000291583,c12=0.00000142721,c13=0.000000197483,c14=-0.0000000218429,c15=0.000000000843296,c16=-0.0000000000481975;
 
+    //Max temps and humidity
+    PriorityQueue<Integer> pqTemp;
+    PriorityQueue<Integer> pqHum;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -197,7 +206,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         tvCurrentHumidity = (TextView) findViewById(R.id.textView_humidityValue);
         tvCurrentTemperature = (TextView) findViewById(R.id.textView_temperatureValue);
         tvCurrentRisk = (TextView) findViewById(R.id.textView_risk);
-
+        tvMaxHumidity = (TextView) findViewById(R.id.textView_humidityMax);
+        tvMaxTemp = (TextView) findViewById(R.id.textView_temperatureMax);
+        vMax = findViewById(R.id.view_main_max);
         btGo.setOnClickListener(this);
 
         btShowLocation = (ImageButton) findViewById(R.id.imageButton_showLocation);
@@ -206,6 +217,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         tvLocation = (TextView) findViewById(R.id.textView_location);
 
         cbCurrentLocation = (CheckBox) findViewById(R.id.checkBox2);
+        cbCurrentLocation.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked){
+                    vMax.setVisibility(View.VISIBLE);
+                }else {
+                    vMax.setVisibility(View.INVISIBLE);
+                }
+            }
+        });
 
         //MARK: MAKING CALL
         sbCall = (SeekBar) findViewById(R.id.seek_Call911);
@@ -412,6 +433,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
+    static class PQsort implements Comparator<Integer> {
+
+        public int compare(Integer one, Integer two) {
+            return two - one;
+        }
+    }
+
     //MARK: Get data of cards from JSON response
     void setData(){
         listData.clear();
@@ -423,13 +451,31 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Log.e("ERROR", e.getMessage(), e);
         }
 
+        PQsort pqs = new PQsort();
+        pqHum=new PriorityQueue<Integer>(12,pqs);
+        pqTemp=new PriorityQueue<Integer>(12,pqs);
+
+        int temp,hum;
         for (int i = 0; i< 12; i++){
-            WeatherCard dummy = new WeatherCard(getJSONString("hour", i, "FCTTIME") + ":00", getJSONString("condition", i, " "), getJSONInt("english", i, "temp"), getJSONInt("humidity", i, " "));
+            //Add temperature and humidity to its respective priority queues
+            temp=getJSONInt("english", i, "temp");
+            pqTemp.add(temp);
+            hum=getJSONInt("humidity", i, " ");
+            pqHum.add(hum);
+            WeatherCard dummy = new WeatherCard(getJSONString("hour", i, "FCTTIME") + ":00", getJSONString("condition", i, " "), temp, hum);
             listData.add(dummy);
         }
 
         adapter.notifyDataSetChanged();
+        setMaxs();
     }
+
+    private void setMaxs() {
+        tvMaxTemp.setText(String.valueOf(pqTemp.peek()) + "°F");
+        tvMaxHumidity.setText(String.valueOf(pqHum.peek()) + "%");
+    }
+
+
 
     //MARK: Get data from json and change to data type
     String getJSONString(String key, int id, String keyObject){
