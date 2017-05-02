@@ -205,10 +205,10 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_below="@+id/linearLayout2"
-                android:layout_marginTop="21dp"
                 android:layout_weight="1"
                 android:orientation="horizontal"
-                android:weightSum="5">
+                android:weightSum="5"
+                android:id="@+id/linearLayout3">
 
                 <ImageView
                     android:layout_width="wrap_content"
@@ -257,6 +257,16 @@
                     android:textSize="36sp" />
 
             </LinearLayout>
+
+            <TextView
+                android:id="@+id/tv_main_max_risk"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:text="Minimal risk"
+                android:textColor="@android:color/background_light"
+                android:layout_below="@+id/linearLayout3"
+                android:layout_centerHorizontal="true" />
 
         </RelativeLayout>
 

@@ -166,6 +166,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     TextView tvCurrentTemperature;
     TextView tvMaxHumidity;
     TextView tvMaxTemp;
+    TextView tvMaxRisk;
     View vMax;
     JSONArray dataTime;
     String Location;
@@ -208,6 +209,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         tvCurrentRisk = (TextView) findViewById(R.id.textView_risk);
         tvMaxHumidity = (TextView) findViewById(R.id.textView_humidityMax);
         tvMaxTemp = (TextView) findViewById(R.id.textView_temperatureMax);
+        tvMaxRisk = (TextView) findViewById(R.id.tv_main_max_risk);
         vMax = findViewById(R.id.view_main_max);
         btGo.setOnClickListener(this);
 
@@ -223,6 +225,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if(isChecked){
                     vMax.setVisibility(View.VISIBLE);
                 }else {
+                    vMax.setVisibility(View.INVISIBLE);
                     vMax.setVisibility(View.INVISIBLE);
                 }
             }
@@ -398,7 +401,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
 
-    void calculateRisk (double temperature, String humidity ){
+    void calculateRisk (double temperature, String humidity, TextView tv ){
 
         humidity = humidity.replaceAll("%", "");
         int Rhumidity = Integer.parseInt(humidity);
@@ -409,25 +412,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (heatIndex >= 126){
 
             btGo.setImageResource(R.drawable.very_high_risk);
-            tvCurrentRisk.setText("Extreme Risk");
+            tv.setText("Extreme Risk");
         }
 
         if (heatIndex >= 104 && heatIndex <=125){
             btGo.setImageResource(R.drawable.high_risk);
-            tvCurrentRisk.setText("High Risk");
+            tv.setText("High Risk");
         }
 
         if (heatIndex >= 91 && heatIndex <=103){
 
             btGo.setImageResource(R.drawable.medium_risk);
-            tvCurrentRisk.setText("Medium Risk");
+            tv.setText("Medium Risk");
 
         }
 
         if (heatIndex <=90){
 
             btGo.setImageResource(R.drawable.minimal_risk);
-            tvCurrentRisk.setText("Minimal Risk");
+            tv.setText("Minimal Risk");
 
         }
 
@@ -473,6 +476,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void setMaxs() {
         tvMaxTemp.setText(String.valueOf(pqTemp.peek()) + "°F");
         tvMaxHumidity.setText(String.valueOf(pqHum.peek()) + "%");
+        calculateRisk(Double.parseDouble(String.valueOf(pqTemp.peek())),String.valueOf(pqHum.peek()+"%"),tvMaxRisk);
     }
 
 
@@ -575,7 +579,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 tvCurrentHumidity.setText(humidity);
 
-                calculateRisk(Double.parseDouble(temperature), humidity);
+                calculateRisk(Double.parseDouble(temperature), humidity, tvCurrentRisk);
 
                 dataTime = (JSONArray) object.getJSONArray("hourly_forecast");
 
