@@ -12,7 +12,6 @@ public class GlobalData {
     final double c1=16.923,c2=0.185212,c3=5.37941,c4=-0.100254,c5=0.00941695,c6=0.00728898,c7=0.000345372,c8=-0.000814971,c9=0.0000102102,c10=-0.000038646,c11=0.0000291583,c12=0.00000142721,c13=0.000000197483,c14=-0.0000000218429,c15=0.000000000843296,c16=-0.0000000000481975;
 
 
-
     public double getRisk (double temperature, String humidity ){
 
         humidity = humidity.replaceAll("%", "");
