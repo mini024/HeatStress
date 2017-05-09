@@ -565,10 +565,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Log.d("Conexion","String transformed: " + Location);
 
             try {
+                URL url;
+
                 if (country != "United States"){
-                    URL url = new URL("http://api.wunderground.com/api/25d0f02c485109f2/conditions/hourly/q/"+ country + "/" +Location+".json");
+                    url = new URL("http://api.wunderground.com/api/25d0f02c485109f2/conditions/hourly/q/"+ country + "/" +Location+".json");
                 } else {
-                    URL url = new URL("http://api.wunderground.com/api/25d0f02c485109f2/conditions/hourly/q/"+ states.get(state) + "/" +Location+".json");
+                    url = new URL("http://api.wunderground.com/api/25d0f02c485109f2/conditions/hourly/q/"+ states.get(state) + "/" +Location+".json");
                 }
                 HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
                 Log.d("Connecion","Retrieving weather from: " + url);
