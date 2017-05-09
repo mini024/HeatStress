@@ -85,37 +85,20 @@ public class WeatherCardAdapter extends RecyclerView.Adapter<WeatherCardAdapter.
                 break;
         }
 
-        double temperature = item.getiTemperature();
-        String humidity = String.valueOf(item.getiHumidity());
-
-        if (item.getiTemperature() != 0 && String.valueOf(item.getiHumidity()) != null){
-            humidity = humidity.replaceAll("%", "");
-            int Rhumidity = Integer.parseInt(humidity);
-            double heatIndex = c1 + c2*temperature +c3*Rhumidity + c4*temperature*Rhumidity + c5*(Math.pow(temperature,2)) + c6*(Math.pow(Rhumidity,2)) + c7*(Math.pow(temperature,2))*Rhumidity + c8*temperature*(Math.pow(Rhumidity,2)) + c9*(Math.pow(temperature,2))*(Math.pow(Rhumidity,2)) + c10*(Math.pow(temperature,3)) + c11*(Math.pow(Rhumidity,3)) + c12*(Math.pow(temperature,3))*Rhumidity + c13*temperature*(Math.pow(Rhumidity,3)) + c14*(Math.pow(temperature,3))*(Math.pow(Rhumidity,2)) + c15*(Math.pow(temperature,2))*(Math.pow(Rhumidity,3)) + c15*(Math.pow(temperature,3))*(Math.pow(Rhumidity,3));
-
-            if (heatIndex >= 126){
-                //Red
+        switch (item.getColor()){
+            case "red":
                 card.setBackgroundColor(card_red);
-            }
-
-            if (heatIndex >= 104 && heatIndex <=125){
-                //Orange
+                break;
+            case "orange":
                 card.setBackgroundColor(card_orange);
-            }
-
-            if (heatIndex >= 91 && heatIndex <=103){
-                //Yellow
+                break;
+            case "yellow":
                 card.setBackgroundColor(card_yellow);
-            }
-
-            if (heatIndex <=90){
-                //Green
+                break;
+            default:
                 card.setBackgroundColor(card_green);
-            }
+                break;
         }
-
-
-
 
         holder.temp_icon.setImageResource(R.drawable.temp);
         holder.hum_icon.setImageResource(R.drawable.drops);

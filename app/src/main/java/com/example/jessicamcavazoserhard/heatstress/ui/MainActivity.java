@@ -178,6 +178,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     TextView tvLocation;
     CheckBox cbCurrentLocation;
     int sbprogress;
+    int RiskType;
 
     final double c1=16.923,c2=0.185212,c3=5.37941,c4=-0.100254,c5=0.00941695,c6=0.00728898,c7=0.000345372,c8=-0.000814971,c9=0.0000102102,c10=-0.000038646,c11=0.0000291583,c12=0.00000142721,c13=0.000000197483,c14=-0.0000000218429,c15=0.000000000843296,c16=-0.0000000000481975;
 
@@ -312,6 +313,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch (v.getId()){
             case R.id.imageButton_risk:
                 Intent i = new Intent(this , InfoActivity.class);
+                i.putExtra("Risk",RiskType);
                 startActivity(i);
                 break;
             case R.id.imageButton_showLocation:
@@ -372,68 +374,41 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     //MARK: Get false Data while getting real data
     ArrayList<WeatherCard> getData(){
         ArrayList<WeatherCard> dummyData = new ArrayList<>();
-        WeatherCard dummy = new WeatherCard("11:00 AM"," ",0,0);
+        WeatherCard dummy = new WeatherCard("11:00 AM"," ",0,0,"green");
         dummyData.add(dummy);
-        dummy = new WeatherCard("12:00 PM"," ",0,0);
+        dummy = new WeatherCard("12:00 PM"," ",0,0,"green");
         dummyData.add(dummy);
-        dummy = new WeatherCard("1:00 PM"," ",0,0);
+        dummy = new WeatherCard("1:00 PM"," ",0,0, "green");
         dummyData.add(dummy);
-        dummy = new WeatherCard("2:00 PM"," ",0,0);
+        dummy = new WeatherCard("2:00 PM"," ",0,0, "green");
         dummyData.add(dummy);
-        dummy = new WeatherCard("3:00 PM"," ",0,0);
+        dummy = new WeatherCard("3:00 PM"," ",0,0, "green");
         dummyData.add(dummy);
-        dummy = new WeatherCard("4:00 PM"," ",0,0);
+        dummy = new WeatherCard("4:00 PM"," ",0,0, "green");
         dummyData.add(dummy);
-        dummy = new WeatherCard("5:00 PM"," ",0,0);
+        dummy = new WeatherCard("5:00 PM"," ",0,0, "green");
         dummyData.add(dummy);
-        dummy = new WeatherCard("6:00 PM"," ",0,0);
+        dummy = new WeatherCard("6:00 PM"," ",0,0, "green");
         dummyData.add(dummy);
-        dummy = new WeatherCard("7:00 PM"," ",0,0);
+        dummy = new WeatherCard("7:00 PM"," ",0,0, "green");
         dummyData.add(dummy);
-        dummy = new WeatherCard("8:00 PM"," ",0,0);
+        dummy = new WeatherCard("8:00 PM"," ",0,0, "green");
         dummyData.add(dummy);
-        dummy = new WeatherCard("9:00 PM"," ",0,0);
+        dummy = new WeatherCard("9:00 PM"," ",0,0, "green");
         dummyData.add(dummy);
-        dummy = new WeatherCard("10:00 PM"," ",0,0);
+        dummy = new WeatherCard("10:00 PM"," ",0,0, "green");
         dummyData.add(dummy);
 
         return dummyData ;
     }
 
-
-    void calculateRisk (double temperature, String humidity, TextView tv ){
+    double getRisk (double temperature, String humidity){
 
         humidity = humidity.replaceAll("%", "");
         int Rhumidity = Integer.parseInt(humidity);
 
-
         double heatIndex = c1 + c2*temperature +c3*Rhumidity + c4*temperature*Rhumidity + c5*(Math.pow(temperature,2)) + c6*(Math.pow(Rhumidity,2)) + c7*(Math.pow(temperature,2))*Rhumidity + c8*temperature*(Math.pow(Rhumidity,2)) + c9*(Math.pow(temperature,2))*(Math.pow(Rhumidity,2)) + c10*(Math.pow(temperature,3)) + c11*(Math.pow(Rhumidity,3)) + c12*(Math.pow(temperature,3))*Rhumidity + c13*temperature*(Math.pow(Rhumidity,3)) + c14*(Math.pow(temperature,3))*(Math.pow(Rhumidity,2)) + c15*(Math.pow(temperature,2))*(Math.pow(Rhumidity,3)) + c15*(Math.pow(temperature,3))*(Math.pow(Rhumidity,3));
-
-        if (heatIndex >= 126){
-
-            btGo.setImageResource(R.drawable.very_high_risk);
-            tv.setText("Extreme Risk");
-        }
-
-        if (heatIndex >= 104 && heatIndex <=125){
-            btGo.setImageResource(R.drawable.high_risk);
-            tv.setText("High Risk");
-        }
-
-        if (heatIndex >= 91 && heatIndex <=103){
-
-            btGo.setImageResource(R.drawable.medium_risk);
-            tv.setText("Medium Risk");
-
-        }
-
-        if (heatIndex <=90){
-
-            btGo.setImageResource(R.drawable.minimal_risk);
-            tv.setText("Minimal Risk");
-
-        }
-
+        return heatIndex;
     }
 
     static class PQsort implements Comparator<Integer> {
@@ -457,6 +432,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         PQsort pqs = new PQsort();
         pqHum=new PriorityQueue<Integer>(12,pqs);
         pqTemp=new PriorityQueue<Integer>(12,pqs);
+        //PriorityQueue pqRisk = new PriorityQueue<Double>(12,pqs);
 
         int temp,hum;
         for (int i = 0; i< 12; i++){
@@ -465,8 +441,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             pqTemp.add(temp);
             hum=getJSONInt("humidity", i, " ");
             pqHum.add(hum);
-            WeatherCard dummy = new WeatherCard(getJSONString("hour", i, "FCTTIME") + ":00", getJSONString("condition", i, " "), temp, hum);
-            listData.add(dummy);
+            double heatIndex = getRisk(temp,Integer.toString(hum));
+            //pqRisk.add(heatIndex);
+
+            if (temp <=80 ||  heatIndex <=90){
+                WeatherCard dummy = new WeatherCard(getJSONString("hour", i, "FCTTIME") + ":00", getJSONString("condition", i, " "), temp, hum, "green");
+                listData.add(dummy);
+            }else if (heatIndex >= 91 && heatIndex <=103){
+                WeatherCard dummy = new WeatherCard(getJSONString("hour", i, "FCTTIME") + ":00", getJSONString("condition", i, " "), temp, hum, "yellow");
+                listData.add(dummy);
+            } else if (heatIndex >= 104 && heatIndex <=125){
+                WeatherCard dummy = new WeatherCard(getJSONString("hour", i, "FCTTIME") + ":00", getJSONString("condition", i, " "), temp, hum, "orange");
+                listData.add(dummy);
+            }else {
+                WeatherCard dummy = new WeatherCard(getJSONString("hour", i, "FCTTIME") + ":00", getJSONString("condition", i, " "), temp, hum, "red");
+                listData.add(dummy);
+            }
         }
 
         adapter.notifyDataSetChanged();
@@ -476,7 +466,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void setMaxs() {
         tvMaxTemp.setText(String.valueOf(pqTemp.peek()) + "°F");
         tvMaxHumidity.setText(String.valueOf(pqHum.peek()) + "%");
-        calculateRisk(Double.parseDouble(String.valueOf(pqTemp.peek())),String.valueOf(pqHum.peek()+"%"),tvMaxRisk);
+        double heatIndex = getRisk(Double.parseDouble(String.valueOf(pqTemp.peek())),String.valueOf(pqHum.peek()+"%"));
+        double itemperature = Double.parseDouble(String.valueOf(pqTemp.peek()));
+        if (itemperature <=80 ||  heatIndex <=90){
+            tvMaxRisk.setText("Minimal Risk");
+            RiskType =1;
+        } else if (heatIndex >= 91 && heatIndex <=103) {
+            tvMaxRisk.setText("Medium Risk");
+            RiskType = 2;
+        }else if (heatIndex >= 104 && heatIndex <=125){
+            tvMaxRisk.setText("High Risk");
+            RiskType =3;
+        }else if (heatIndex >= 126){
+            tvMaxRisk.setText("Extreme Risk");
+            RiskType=4;
+        }
     }
 
 
@@ -579,7 +583,26 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 tvCurrentHumidity.setText(humidity);
 
-                calculateRisk(Double.parseDouble(temperature), humidity, tvCurrentRisk);
+                double itemperature = Double.parseDouble(temperature);
+                double heatIndex = getRisk(Double.parseDouble(temperature), humidity);
+
+                if (itemperature <=80 ||  heatIndex <=90){
+                    btGo.setImageResource(R.drawable.minimal_risk);
+                    tvCurrentRisk.setText("Minimal Risk");
+                    RiskType =1;
+                } else if (heatIndex >= 91 && heatIndex <=103) {
+                    btGo.setImageResource(R.drawable.medium_risk);
+                    tvCurrentRisk.setText("Medium Risk");
+                    RiskType = 2;
+                }else if (heatIndex >= 104 && heatIndex <=125){
+                    btGo.setImageResource(R.drawable.high_risk);
+                    tvCurrentRisk.setText("High Risk");
+                    RiskType =3;
+                }else if (heatIndex >= 126){
+                    btGo.setImageResource(R.drawable.very_high_risk);
+                    tvCurrentRisk.setText("Extreme Risk");
+                    RiskType=4;
+                }
 
                 dataTime = (JSONArray) object.getJSONArray("hourly_forecast");
 
@@ -609,7 +632,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Location = Location.replaceAll("\\s+", "%20");
             Log.d("Conexion","String transformed: " + Location);
 
-            http://autocomplete.wunderground.com/aq?query=query
             try {
                 URL url = new URL("http://autocomplete.wunderground.com/aq?query=" + Location);
                 HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();

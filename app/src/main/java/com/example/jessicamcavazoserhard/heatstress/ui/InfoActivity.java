@@ -26,6 +26,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
+import android.widget.TextView;
 
 import com.example.jessicamcavazoserhard.heatstress.R;
 
@@ -33,15 +34,24 @@ public class InfoActivity extends AppCompatActivity implements View.OnClickListe
 
     ImageButton ibMoreInfo;
     SeekBar sbCall;
+    TextView tvDo, tvDONT;
     int sbprogress = 0;
+    int RiskType;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_info);
 
+        Bundle i = getIntent().getExtras();
+        RiskType = i.getInt("Risk");
+
+        tvDo = (TextView)findViewById(R.id.text_DoRecomendations);
+        tvDONT = (TextView)findViewById(R.id.text_DontRecomendations);
         ibMoreInfo = (ImageButton) findViewById(R.id.image_MoreInfo);
         ibMoreInfo.setOnClickListener(this);
+
+        SetRecomendations();
 
         sbCall = (SeekBar) findViewById(R.id.seek_Call911);
         sbCall.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -71,6 +81,33 @@ public class InfoActivity extends AppCompatActivity implements View.OnClickListe
                 sbprogress = progress;
             }
         });
+
+    }
+
+    public void SetRecomendations(){
+
+        switch (RiskType){
+
+            case 1:
+                tvDo.setText(R.string.minimal_DO_REQ);
+                tvDONT.setText(R.string.minimal_DONT_REQ);
+                break;
+
+            case 2:
+                tvDo.setText(R.string.medium_DO_REQ);
+                tvDONT.setText(R.string.medium_DONT_REQ);
+                break;
+
+            case 3:
+                tvDo.setText(R.string.high_DO_REQ);
+                tvDONT.setText(R.string.high_DONT_REQ);
+                break;
+
+            case 4:
+                tvDo.setText(R.string.very_high_DO_REQ);
+                tvDONT.setText(R.string.very_high_DONT_REQ);
+
+        }
 
     }
 
