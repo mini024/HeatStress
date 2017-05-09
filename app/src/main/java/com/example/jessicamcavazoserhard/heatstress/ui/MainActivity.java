@@ -777,13 +777,29 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             try {
 
                 JSONObject object = (JSONObject) new JSONTokener(response).nextValue();
-                // TODO:PARSE JSON FILE TO GET CITY AND STATE
-                //sCity = ;
-                //type= administrative_area_level_2
-                //sState = ;
-                //type= administrative_area_level_1
-                // TODO: AFTER PASRSING, SET etLocation
-                //etLocation.setText();
+                JSONArray results = object.getJSONArray("results");
+                JSONObject object1 = results.getJSONObject(0);
+                JSONArray address_components = object1.getJSONArray("address_components");
+                JSONObject object2;
+
+                boolean bstate=false,bcity=false;
+                for(int i=0; i<address_components.length(); i++){
+                    object2 = address_components.getJSONObject(i);
+                    String type = object2.getString("types");
+                    if(type.contains("administrative_area_level_1")){
+                        sState=object2.getString("long_name");
+                        Log.d("STATE",sState);
+                        bstate=true;
+                    }
+                    if(type.contains("administrative_area_level_2")){
+                        sCity=object2.getString("long_name");
+                        Log.d("CITY",sCity);
+                        bcity=true;
+                    }
+                }
+                if(bcity && bstate){
+                    etLocation.setText(sCity+", "+sState);
+                }
             } catch (JSONException e){
                 Log.e("ERROR", e.getMessage(), e);
             }
