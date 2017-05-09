@@ -395,11 +395,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             switch (keyCode) {
                 case KeyEvent.KEYCODE_DPAD_CENTER:
                 case KeyEvent.KEYCODE_ENTER:
-                    //MARK: Get Weather
-                    InputMethodManager in = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                    in.hideSoftInputFromWindow(etLocation.getApplicationWindowToken(),InputMethodManager.HIDE_NOT_ALWAYS);
-                    new RetrieveWeatherForLocation().execute();
-                    HideLocation();
+                    if (isInternetAvailable()){
+                        //MARK: Get Weather
+                        InputMethodManager in = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                        in.hideSoftInputFromWindow(etLocation.getApplicationWindowToken(),InputMethodManager.HIDE_NOT_ALWAYS);
+                        new RetrieveWeatherForLocation().execute();
+                        HideLocation();
+                    } else {
+                        new AlertDialog.Builder(MainActivity.this).setTitle("Internet Connection").setMessage("Please check your internet connection").setNeutralButton("Close", null).show();
+                    }
                     return true;
                 default:
                     break;
@@ -620,8 +624,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Log.d("Conexion","String transformed: " + Location);
 
             try {
-
-
                 if (internet) {
                     URL url;
                     if (states.get(state) != null) {
@@ -662,45 +664,45 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Log.i("INFO", response);
 
             try {
+                if (internet){
+                    JSONObject object = (JSONObject) new JSONTokener(response).nextValue();
 
-                JSONObject object = (JSONObject) new JSONTokener(response).nextValue();
+                    humidity = object.getJSONObject("current_observation").getString("relative_humidity");
 
-                humidity = object.getJSONObject("current_observation").getString("relative_humidity");
+                    Log.d("Query", object.toString());
 
-                Log.d("Query", object.toString());
+                    temperature = object.getJSONObject("current_observation").getString("temp_f");
+                    Log.d("Humedad","HUMEDAD EN SAN FRANCISCO : " + humidity);
 
-                temperature = object.getJSONObject("current_observation").getString("temp_f");
-                Log.d("Humedad","HUMEDAD EN SAN FRANCISCO : " + humidity);
+                    tvCurrentTemperature.setText(temperature + " ºF");
 
-                tvCurrentTemperature.setText(temperature + " ºF");
+                    tvCurrentHumidity.setText(humidity);
 
-                tvCurrentHumidity.setText(humidity);
+                    double itemperature = Double.parseDouble(temperature);
+                    double heatIndex = getRisk(Double.parseDouble(temperature), humidity);
 
-                double itemperature = Double.parseDouble(temperature);
-                double heatIndex = getRisk(Double.parseDouble(temperature), humidity);
+                    if (itemperature <=80 ||  heatIndex <=90){
+                        btGo.setImageResource(R.drawable.minimal_risk);
+                        tvCurrentRisk.setText("Minimal Risk");
+                        RiskType =1;
+                    } else if (heatIndex >= 91 && heatIndex <=103) {
+                        btGo.setImageResource(R.drawable.medium_risk);
+                        tvCurrentRisk.setText("Medium Risk");
+                        RiskType = 2;
+                    }else if (heatIndex >= 104 && heatIndex <=125){
+                        btGo.setImageResource(R.drawable.high_risk);
+                        tvCurrentRisk.setText("High Risk");
+                        RiskType =3;
+                    }else if (heatIndex >= 126){
+                        btGo.setImageResource(R.drawable.very_high_risk);
+                        tvCurrentRisk.setText("Extreme Risk");
+                        RiskType=4;
+                    }
 
-                if (itemperature <=80 ||  heatIndex <=90){
-                    btGo.setImageResource(R.drawable.minimal_risk);
-                    tvCurrentRisk.setText("Minimal Risk");
-                    RiskType =1;
-                } else if (heatIndex >= 91 && heatIndex <=103) {
-                    btGo.setImageResource(R.drawable.medium_risk);
-                    tvCurrentRisk.setText("Medium Risk");
-                    RiskType = 2;
-                }else if (heatIndex >= 104 && heatIndex <=125){
-                    btGo.setImageResource(R.drawable.high_risk);
-                    tvCurrentRisk.setText("High Risk");
-                    RiskType =3;
-                }else if (heatIndex >= 126){
-                    btGo.setImageResource(R.drawable.very_high_risk);
-                    tvCurrentRisk.setText("Extreme Risk");
-                    RiskType=4;
+                    dataTime = (JSONArray) object.getJSONArray("hourly_forecast");
+
+                    setData();
                 }
-
-                dataTime = (JSONArray) object.getJSONArray("hourly_forecast");
-
-                setData();
-
 
             } catch (JSONException e){
                 Log.e("ERROR", e.getMessage(), e);
@@ -759,26 +761,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Log.i("INFO", response);
 
             try {
+                if (internet) {
+                    JSONObject object = (JSONObject) new JSONTokener(response).nextValue();
 
-                JSONObject object = (JSONObject) new JSONTokener(response).nextValue();
+                    JSONArray results = object.getJSONArray("RESULTS");
 
-                JSONArray results = object.getJSONArray("RESULTS");
+                    //Arrays.fill( Cities, results.length() );
+                    Cities = new String[results.length()];
 
-                //Arrays.fill( Cities, results.length() );
-                Cities = new String[results.length()];
+                    for (int i = 0; i < results.length(); i++) {
+                        JSONObject CityObject = results.getJSONObject(i);
+                        String city = CityObject.getString("name");
+                        Cities[i] = city;
+                    }
 
-                for (int i = 0; i< results.length(); i++){
-                    JSONObject CityObject = results.getJSONObject(i);
-                    String city = CityObject.getString("name");
-                    Cities[i] = city;
+                    //Update Adapter
+                    adapterAutoComplete = new ArrayAdapter<String>(MainActivity.this,
+                            android.R.layout.simple_dropdown_item_1line, Cities);
+
+                    etLocation.setAdapter(adapterAutoComplete);
+                    adapterAutoComplete.notifyDataSetChanged();
                 }
-
-                //Update Adapter
-                adapterAutoComplete = new ArrayAdapter<String>(MainActivity.this,
-                        android.R.layout.simple_dropdown_item_1line, Cities);
-
-                etLocation.setAdapter(adapterAutoComplete);
-                adapterAutoComplete.notifyDataSetChanged();
 
             } catch (JSONException e){
                 Log.e("ERROR", e.getMessage(), e);
@@ -846,21 +849,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         protected String doInBackground(Void... urls) {
             try {
-                URL url = new URL("https://maps.googleapis.com/maps/api/geocode/json?latlng="+lLat+","+lLong+"&key=AIzaSyClNTvnFptk7EH8p1RynvJ1km0a6MyFLdA");
-                HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-                Log.d("Connecion","Location from: " + url);
-                try {
-                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
-                    StringBuilder stringBuilder = new StringBuilder();
-                    String line;
-                    while ((line = bufferedReader.readLine()) != null) {
-                        stringBuilder.append(line).append("\n");
+                if (internet){
+                    URL url = new URL("https://maps.googleapis.com/maps/api/geocode/json?latlng="+lLat+","+lLong+"&key=AIzaSyClNTvnFptk7EH8p1RynvJ1km0a6MyFLdA");
+                    HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+                    Log.d("Connecion","Location from: " + url);
+                    try {
+                        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+                        StringBuilder stringBuilder = new StringBuilder();
+                        String line;
+                        while ((line = bufferedReader.readLine()) != null) {
+                            stringBuilder.append(line).append("\n");
+                        }
+                        bufferedReader.close();
+                        return stringBuilder.toString();
                     }
-                    bufferedReader.close();
-                    return stringBuilder.toString();
-                }
-                finally{
-                    urlConnection.disconnect();
+                    finally{
+                        urlConnection.disconnect();
+                    }
+                } else {
+                    return null;
                 }
             }
             catch(Exception e) {
@@ -876,35 +883,36 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Log.i("INFO", response);
 
             try {
+                if (internet){
+                    JSONObject object = (JSONObject) new JSONTokener(response).nextValue();
+                    JSONArray results = object.getJSONArray("results");
+                    JSONObject object1 = results.getJSONObject(0);
+                    JSONArray address_components = object1.getJSONArray("address_components");
+                    JSONObject object2;
 
-                JSONObject object = (JSONObject) new JSONTokener(response).nextValue();
-                JSONArray results = object.getJSONArray("results");
-                JSONObject object1 = results.getJSONObject(0);
-                JSONArray address_components = object1.getJSONArray("address_components");
-                JSONObject object2;
-
-                boolean bstate=false,bcity=false, bcountry = false;
-                for(int i=0; i<address_components.length(); i++){
-                    object2 = address_components.getJSONObject(i);
-                    String type = object2.getString("types");
-                    if(type.contains("administrative_area_level_1")){
-                        sState=object2.getString("long_name");
-                        Log.d("STATE",sState);
-                        bstate=true;
+                    boolean bstate=false,bcity=false, bcountry = false;
+                    for(int i=0; i<address_components.length(); i++){
+                        object2 = address_components.getJSONObject(i);
+                        String type = object2.getString("types");
+                        if(type.contains("administrative_area_level_1")){
+                            sState=object2.getString("long_name");
+                            Log.d("STATE",sState);
+                            bstate=true;
+                        }
+                        if(type.contains("administrative_area_level_2")){
+                            sCity=object2.getString("long_name");
+                            Log.d("CITY",sCity);
+                            bcity=true;
+                        }
+                        if(type.contains("country")){
+                            country=object2.getString("long_name");
+                            Log.d("COUNTRY",country);
+                            bcountry = true;
+                        }
                     }
-                    if(type.contains("administrative_area_level_2")){
-                        sCity=object2.getString("long_name");
-                        Log.d("CITY",sCity);
-                        bcity=true;
+                    if(bcity && bstate && bcountry){
+                        etLocation.setText(sCity+", "+sState);
                     }
-                    if(type.contains("country")){
-                        country=object2.getString("long_name");
-                        Log.d("COUNTRY",country);
-                        bcountry = true;
-                    }
-                }
-                if(bcity && bstate && bcountry){
-                    etLocation.setText(sCity+", "+sState);
                 }
             } catch (JSONException e){
                 Log.e("ERROR", e.getMessage(), e);
