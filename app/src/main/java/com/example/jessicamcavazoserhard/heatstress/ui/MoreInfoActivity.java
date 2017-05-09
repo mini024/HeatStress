@@ -52,6 +52,25 @@ public class MoreInfoActivity extends ListActivity implements AdapterView.OnItem
         Subject s;
 
         ArrayList<Subject> listSubjects = new ArrayList<>();
+        s = new Subject("Heatstroke symptoms and treatment", "Look for the following symptoms: \n" +
+                "Confusion\n" +
+                "Fainting\n" +
+                "Seizures\n" +
+                "Excessive sweating or red, hot, dry skin\n" +
+                "Very high body temperature \n" +"\n" +
+
+                "First Aid \n" +
+                "Call 911 \n" + "\n" +
+
+                "While waiting for help: \n" +
+
+                "Place worker in shady, cool area \n"+
+                "Loosen clothing, remove outer clothing \n"+
+                "Fan air on worker; cold packs in armpits \n"+
+                "Wet worker with cool water; apply ice packs, cool compresses, or ice if available\n"+
+                "Provide fluids (preferably water) as soon as possible \n"+
+                "Stay with worker until help arrives");
+        listSubjects.add(s);
         s = new Subject(  "CPR",
                 "When to use\n  CPR can help a person who has stopped breathing, and whose heart may have stopped beating." + "Someone can suffer that from:\n" +
                         "- heart attacks\n" +
@@ -80,7 +99,7 @@ public class MoreInfoActivity extends ListActivity implements AdapterView.OnItem
     }
 
     public String[] getTitles(){
-        String[] sTitles = new String[3];
+        String[] sTitles = new String[4];
         for (int i = 0; i<sSubjects.size(); i++){
             String title =  sSubjects.get(i).getTitle();
             sTitles[i] = title;
@@ -93,8 +112,21 @@ public class MoreInfoActivity extends ListActivity implements AdapterView.OnItem
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Subject s = (Subject) sSubjects.get(position);
-        Intent i = new Intent(this, DetailActivity.class);
-        i.putExtra("subject", s);
-        startActivity(i);
+
+        if (position == 0){
+            Intent i = new Intent(this, VideoDetailActivity.class);
+            i.putExtra("subject", s);
+            i.putExtra("Video","LUAWtmQO31k");
+            startActivity(i);
+        }else if (position == 2){
+            Intent i = new Intent(this, VideoDetailActivity.class);
+            i.putExtra("subject", s);
+            i.putExtra("Video","krkJfHO6vs8");
+            startActivity(i);
+        }else{
+            Intent i = new Intent(this, DetailActivity.class);
+            i.putExtra("subject", s);
+            startActivity(i);
+        }
     }
 }
