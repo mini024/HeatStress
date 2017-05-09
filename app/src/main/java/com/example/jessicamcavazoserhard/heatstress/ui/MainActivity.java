@@ -23,11 +23,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -192,7 +195,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     ImageButton btShowLocation;
     TextView tvLocation;
     CheckBox cbCurrentLocation;
-    String country;
+    String country = "";
+    boolean internet = true;
     int sbprogress;
 
     final double c1=16.923,c2=0.185212,c3=5.37941,c4=-0.100254,c5=0.00941695,c6=0.00728898,c7=0.000345372,c8=-0.000814971,c9=0.0000102102,c10=-0.000038646,c11=0.0000291583,c12=0.00000142721,c13=0.000000197483,c14=-0.0000000218429,c15=0.000000000843296,c16=-0.0000000000481975;
@@ -290,6 +294,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
 
+        if (!isInternetAvailable()){
+            internet = false;
+            new AlertDialog.Builder(this).setTitle("Internet Connection").setMessage("Please check your internet connection").setNeutralButton("Close", null).show();
+        }
+
         //Auto Complete Text View
         adapterAutoComplete = new ArrayAdapter<String>(this,
                 android.R.layout.simple_dropdown_item_1line, Cities);
@@ -297,7 +306,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         etLocation = (AutoCompleteTextView) findViewById(R.id.editText_address);
         etLocation.setAdapter(adapterAutoComplete);
         etLocation.setOnKeyListener(this);
-        etLocation.setThreshold(5);
+        etLocation.setThreshold(3);
         etLocation.addTextChangedListener(textWatcher);
     }
 
@@ -307,10 +316,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
             if (start ==  4) {
-                //MARK: Get Weather
-                InputMethodManager in = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                in.hideSoftInputFromWindow(etLocation.getApplicationWindowToken(),InputMethodManager.HIDE_NOT_ALWAYS);
-                new RetrieveAutoComplete().execute();
+                if (!isInternetAvailable()){
+                    internet = false;
+                    new AlertDialog.Builder(MainActivity.this).setTitle("Internet Connection").setMessage("Please check your internet connection").setNeutralButton("Close", null).show();
+                } else {
+                    internet = true;
+                    //MARK: Get Weather
+                    InputMethodManager in = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    in.hideSoftInputFromWindow(etLocation.getApplicationWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                    new RetrieveAutoComplete().execute();
+                }
             }
         }
 
@@ -420,14 +435,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public boolean isInternetAvailable() {
-        try {
-            InetAddress ipAddr = InetAddress.getByName("google.com"); //You can replace it with your name
-            return !ipAddr.equals("");
-
-        } catch (Exception e) {
-            return false;
-        }
-
+        ConnectivityManager cm =
+                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        return netInfo != null && netInfo.isConnectedOrConnecting();
     }
 
 
@@ -565,27 +576,33 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Log.d("Conexion","String transformed: " + Location);
 
             try {
-                URL url;
 
-                if (country != "United States"){
-                    url = new URL("http://api.wunderground.com/api/25d0f02c485109f2/conditions/hourly/q/"+ country + "/" +Location+".json");
-                } else {
-                    url = new URL("http://api.wunderground.com/api/25d0f02c485109f2/conditions/hourly/q/"+ states.get(state) + "/" +Location+".json");
-                }
-                HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-                Log.d("Connecion","Retrieving weather from: " + url);
-                try {
-                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
-                    StringBuilder stringBuilder = new StringBuilder();
-                    String line;
-                    while ((line = bufferedReader.readLine()) != null) {
-                        stringBuilder.append(line).append("\n");
+
+                if (internet) {
+                    URL url;
+                    if (country != "United States" && country != "") {
+                        url = new URL("http://api.wunderground.com/api/25d0f02c485109f2/conditions/hourly/q/" + country + "/" + Location + ".json");
+                    } else if (states.get(state) != null) {
+                        url = new URL("http://api.wunderground.com/api/25d0f02c485109f2/conditions/hourly/q/" + states.get(state) + "/" + Location + ".json");
+                    } else {
+                        url = new URL("http://api.wunderground.com/api/25d0f02c485109f2/conditions/hourly/q/" + state + "/" + Location + ".json");
                     }
-                    bufferedReader.close();
-                    return stringBuilder.toString();
-                }
-                finally{
-                    urlConnection.disconnect();
+                    HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+                    Log.d("Connecion", "Retrieving weather from: " + url);
+                    try {
+                        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+                        StringBuilder stringBuilder = new StringBuilder();
+                        String line;
+                        while ((line = bufferedReader.readLine()) != null) {
+                            stringBuilder.append(line).append("\n");
+                        }
+                        bufferedReader.close();
+                        return stringBuilder.toString();
+                    } finally {
+                        urlConnection.disconnect();
+                    }
+                } else {
+                    return null;
                 }
             }
             catch(Exception e) {
@@ -640,28 +657,31 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         protected String doInBackground(Void... urls) {
-
             // Do some validation here
             Location = Location.replaceAll("\\s+", "%20");
             Log.d("Conexion","String transformed: " + Location);
 
-            http://autocomplete.wunderground.com/aq?query=query
+            //http://autocomplete.wunderground.com/aq?query=query
             try {
-                URL url = new URL("http://autocomplete.wunderground.com/aq?query=" + Location);
-                HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-                Log.d("Connecion","Retrieving weather from: " + url);
-                try {
-                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
-                    StringBuilder stringBuilder = new StringBuilder();
-                    String line;
-                    while ((line = bufferedReader.readLine()) != null) {
-                        stringBuilder.append(line).append("\n");
+                if (internet){
+                    URL url = new URL("http://autocomplete.wunderground.com/aq?query=" + Location);
+                    HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+                    Log.d("Connecion","Retrieving weather from: " + url);
+                    try {
+                        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+                        StringBuilder stringBuilder = new StringBuilder();
+                        String line;
+                        while ((line = bufferedReader.readLine()) != null) {
+                            stringBuilder.append(line).append("\n");
+                        }
+                        bufferedReader.close();
+                        return stringBuilder.toString();
                     }
-                    bufferedReader.close();
-                    return stringBuilder.toString();
-                }
-                finally{
-                    urlConnection.disconnect();
+                    finally{
+                        urlConnection.disconnect();
+                    }
+                } else {
+                    return null;
                 }
             }
             catch(Exception e) {
