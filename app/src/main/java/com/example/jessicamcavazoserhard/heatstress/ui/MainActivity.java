@@ -609,7 +609,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Location = Location.replaceAll("\\s+", "%20");
             Log.d("Conexion","String transformed: " + Location);
 
-            http://autocomplete.wunderground.com/aq?query=query
+            //http://autocomplete.wunderground.com/aq?query=query
             try {
                 URL url = new URL("http://autocomplete.wunderground.com/aq?query=" + Location);
                 HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
