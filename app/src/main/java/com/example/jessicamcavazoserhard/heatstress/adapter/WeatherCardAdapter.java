@@ -48,9 +48,7 @@ public class WeatherCardAdapter extends RecyclerView.Adapter<WeatherCardAdapter.
     private LayoutInflater inflater;
     //Instance of global
     GlobalData global;
-    RelativeLayout card;
 
-    final double c1=16.923,c2=0.185212,c3=5.37941,c4=-0.100254,c5=0.00941695,c6=0.00728898,c7=0.000345372,c8=-0.000814971,c9=0.0000102102,c10=-0.000038646,c11=0.0000291583,c12=0.00000142721,c13=0.000000197483,c14=-0.0000000218429,c15=0.000000000843296,c16=-0.0000000000481975;
     int card_green, card_red, card_orange, card_yellow;
 
     public WeatherCardAdapter(List<WeatherCard> listData, Context c){
@@ -77,6 +75,8 @@ public class WeatherCardAdapter extends RecyclerView.Adapter<WeatherCardAdapter.
                 break;
             case "Partly Cloudy": holder.weather_icon.setImageResource(R.drawable.sun_cloud);
                 break;
+            case "Mostly Cloudy": holder.weather_icon.setImageResource(R.drawable.sun_cloud);
+                break;
             case "Cloudy": holder.weather_icon.setImageResource(R.drawable.cloud);
                 break;
             case "Windy": holder.weather_icon.setImageResource(R.drawable.wind);
@@ -87,16 +87,16 @@ public class WeatherCardAdapter extends RecyclerView.Adapter<WeatherCardAdapter.
 
         switch (item.getColor()){
             case "red":
-                card.setBackgroundColor(card_red);
+                holder.card.setBackgroundColor(card_red);
                 break;
             case "orange":
-                card.setBackgroundColor(card_orange);
+                holder.card.setBackgroundColor(card_orange);
                 break;
             case "yellow":
-                card.setBackgroundColor(card_yellow);
+                holder.card.setBackgroundColor(card_yellow);
                 break;
             default:
-                card.setBackgroundColor(card_green);
+                holder.card.setBackgroundColor(card_green);
                 break;
         }
 
@@ -119,6 +119,7 @@ public class WeatherCardAdapter extends RecyclerView.Adapter<WeatherCardAdapter.
         ImageView weather_icon, temp_icon, hum_icon;
         TextView hour, temp, hum;
         View container;
+        RelativeLayout card;
 
         public WeatherCardHolder(View itemView) {
             super(itemView);

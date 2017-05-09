@@ -22,7 +22,7 @@ import com.google.android.youtube.player.YouTubePlayerView;
 public class VideoDetailActivity extends YouTubeBaseActivity implements YouTubePlayer.OnInitializedListener {
 
     public static final String API_KEY ="AIzaSyAucJPM1P00vwl0jDK6f_sjo1izJ2dpfmI";
-    public static final String Video_ID = "krkJfHO6vs8";//hdeFZ6nt9tc LUAWtmQO31k krkJfHO6vs8
+    public String Video_ID; //hdeFZ6nt9tc LUAWtmQO31k krkJfHO6vs8
 
     TextView tvtitle;
     TextView tvdescription;
@@ -37,8 +37,10 @@ public class VideoDetailActivity extends YouTubeBaseActivity implements YouTubeP
         tvdescription = (TextView) findViewById(R.id.textView_description);
 
         if (getIntent().getExtras() != null) {
-            s = (Subject) getIntent().getSerializableExtra("subject");
 
+            Bundle b = getIntent().getExtras();
+            s = (Subject) getIntent().getSerializableExtra("subject");
+            Video_ID = b.getString("Video");
             tvtitle.setText(s.getTitle());
             tvdescription.setText(s.getsDescription());
         }

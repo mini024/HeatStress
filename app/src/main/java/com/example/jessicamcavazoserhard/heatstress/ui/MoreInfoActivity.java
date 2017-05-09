@@ -116,9 +116,14 @@ public class MoreInfoActivity extends ListActivity implements AdapterView.OnItem
         if (position == 0){
             Intent i = new Intent(this, VideoDetailActivity.class);
             i.putExtra("subject", s);
+            i.putExtra("Video","LUAWtmQO31k");
             startActivity(i);
-        }
-        else {
+        }else if (position == 2){
+            Intent i = new Intent(this, VideoDetailActivity.class);
+            i.putExtra("subject", s);
+            i.putExtra("Video","krkJfHO6vs8");
+            startActivity(i);
+        }else{
             Intent i = new Intent(this, DetailActivity.class);
             i.putExtra("subject", s);
             startActivity(i);
