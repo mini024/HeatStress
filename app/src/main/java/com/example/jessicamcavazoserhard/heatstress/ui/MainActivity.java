@@ -203,8 +203,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     final double c1=16.923,c2=0.185212,c3=5.37941,c4=-0.100254,c5=0.00941695,c6=0.00728898,c7=0.000345372,c8=-0.000814971,c9=0.0000102102,c10=-0.000038646,c11=0.0000291583,c12=0.00000142721,c13=0.000000197483,c14=-0.0000000218429,c15=0.000000000843296,c16=-0.0000000000481975;
 
     //Max temps and humidity
-    PriorityQueue<Integer> pqTemp;
-    PriorityQueue<Integer> pqHum;
+    PriorityQueue<Integer> pqRisk;
+    Map mapTemps, mapHums, mapType;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -472,32 +472,44 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         PQsort pqs = new PQsort();
-        pqHum=new PriorityQueue<Integer>(12,pqs);
-        pqTemp=new PriorityQueue<Integer>(12,pqs);
+        mapHums=new HashMap();
+        mapTemps=new HashMap();
+        mapType = new HashMap();
+        pqRisk=new PriorityQueue<Integer>(12,pqs);
         //PriorityQueue pqRisk = new PriorityQueue<Double>(12,pqs);
 
         int temp,hum;
         for (int i = 0; i< 12; i++){
             //Add temperature and humidity to its respective priority queues
             temp=getJSONInt("english", i, "temp");
-            pqTemp.add(temp);
             hum=getJSONInt("humidity", i, " ");
-            pqHum.add(hum);
             double heatIndex = getRisk(temp,Integer.toString(hum));
-            //pqRisk.add(heatIndex);
+            Log.d("RISK",String.valueOf(i)+" "+String.valueOf((int)heatIndex));
+
+            mapHums.put((int)heatIndex,String.valueOf(hum));
+            mapTemps.put((int)heatIndex,String.valueOf(temp));
+            pqRisk.add((int)heatIndex);
 
             if (temp <=80 ||  heatIndex <=90){
                 WeatherCard dummy = new WeatherCard(getJSONString("hour", i, "FCTTIME") + ":00", getJSONString("condition", i, " "), temp, hum, "green");
                 listData.add(dummy);
+                mapType.put((int)heatIndex,1);
+                Log.d("TYPE_C",String.valueOf((int)heatIndex)+" 1");
             }else if (heatIndex >= 91 && heatIndex <=103){
                 WeatherCard dummy = new WeatherCard(getJSONString("hour", i, "FCTTIME") + ":00", getJSONString("condition", i, " "), temp, hum, "yellow");
                 listData.add(dummy);
+                mapType.put((int)heatIndex,2);
+                Log.d("TYPE_C",String.valueOf((int)heatIndex)+" 2");
             } else if (heatIndex >= 104 && heatIndex <=125){
                 WeatherCard dummy = new WeatherCard(getJSONString("hour", i, "FCTTIME") + ":00", getJSONString("condition", i, " "), temp, hum, "orange");
                 listData.add(dummy);
+                mapType.put((int)heatIndex,3);
+                Log.d("TYPE_C",String.valueOf((int)heatIndex)+" 3");
             }else {
                 WeatherCard dummy = new WeatherCard(getJSONString("hour", i, "FCTTIME") + ":00", getJSONString("condition", i, " "), temp, hum, "red");
                 listData.add(dummy);
+                mapType.put((int)heatIndex,4);
+                Log.d("TYPE_C",String.valueOf((int)heatIndex)+" 4");
             }
         }
 
@@ -506,25 +518,49 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void setMaxs() {
-        tvMaxTemp.setText(String.valueOf(pqTemp.peek()) + "°F");
-        tvMaxHumidity.setText(String.valueOf(pqHum.peek()) + "%");
-        double heatIndex = getRisk(Double.parseDouble(String.valueOf(pqTemp.peek())),String.valueOf(pqHum.peek()+"%"));
-        double itemperature = Double.parseDouble(String.valueOf(pqTemp.peek()));
-        if (itemperature <=80 ||  heatIndex <=90){
+
+        //double heatIndex = getRisk(Double.parseDouble(String.valueOf(pqTemp.peek())),String.valueOf(pqHum.peek()+"%"));
+
+        int heatIndex = getMaxIndex();
+        Log.d("HEATINDEX",String.valueOf(heatIndex));
+        tvMaxTemp.setText(mapTemps.get(heatIndex) + "°F");
+        tvMaxHumidity.setText(mapHums.get(heatIndex) + "%");
+        if ((int)mapType.get(heatIndex)==1){
+            Log.d("RISK","MIN");
             tvMaxRisk.setText("Minimal Risk");
-            RiskType =1;
-        } else if (heatIndex >= 91 && heatIndex <=103) {
+
+        } else if ((int)mapType.get(heatIndex)==2) {
+            Log.d("RISK","MED");
             tvMaxRisk.setText("Medium Risk");
-            RiskType = 2;
-        }else if (heatIndex >= 104 && heatIndex <=125){
+
+        }else if ((int)mapType.get(heatIndex)==3){
+            Log.d("RISK","HIGH");
             tvMaxRisk.setText("High Risk");
-            RiskType =3;
-        }else if (heatIndex >= 126){
+
+        }else if ((int)mapType.get(heatIndex)==4){
+            Log.d("RISK","EXT");
             tvMaxRisk.setText("Extreme Risk");
-            RiskType=4;
+
         }
     }
 
+    private int getMaxIndex() {
+        int iMaxType=0;
+        int iMaxIndex=0;
+
+        for(int c=0; c<12; c++){
+            Log.d("MAX_TYPS",String.valueOf((int)mapType.get(pqRisk.peek())));
+            if ((int)mapType.get(pqRisk.peek())>iMaxType){
+                iMaxType=(int)mapType.get(pqRisk.peek());
+                iMaxIndex=pqRisk.poll();
+                Log.d("MAX_I",String.valueOf(iMaxIndex));
+                Log.d("MAX_T",String.valueOf(iMaxType));
+            }else{
+                pqRisk.poll();
+            }
+        }
+        return iMaxIndex;
+    }
 
 
     //MARK: Get data from json and change to data type
