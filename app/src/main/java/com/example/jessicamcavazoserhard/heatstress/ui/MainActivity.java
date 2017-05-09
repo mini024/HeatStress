@@ -685,11 +685,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Location = Location.replaceAll("\\s+", "%20");
             Log.d("Conexion","String transformed: " + Location);
 
-<<<<<<< HEAD
-            //http://autocomplete.wunderground.com/aq?query=query
-=======
-
->>>>>>> cc1563642603c1e3530d8cb3bf760a4f2516ef68
             try {
                 if (internet){
                     URL url = new URL("http://autocomplete.wunderground.com/aq?query=" + Location);
