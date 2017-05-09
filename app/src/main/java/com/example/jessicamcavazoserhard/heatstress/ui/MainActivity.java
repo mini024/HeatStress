@@ -265,7 +265,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if (sbprogress > 93) {
                     //Making Call
                     Intent i = new Intent(Intent.ACTION_CALL);
-                    i.setData(Uri.parse("tel:8186938092"));
+                    i.setData(Uri.parse("tel:8180200922"));
                     if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
                         // TODO: Consider calling
                         //    ActivityCompat#requestPermissions
