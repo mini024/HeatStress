@@ -22,9 +22,15 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Location;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -51,6 +57,10 @@ import com.example.jessicamcavazoserhard.heatstress.GlobalData;
 import com.example.jessicamcavazoserhard.heatstress.R;
 import com.example.jessicamcavazoserhard.heatstress.adapter.WeatherCardAdapter;
 import com.example.jessicamcavazoserhard.heatstress.model.WeatherCard;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -60,6 +70,7 @@ import org.json.JSONTokener;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.InetAddress;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -68,7 +79,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.PriorityQueue;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener, View.OnKeyListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, View.OnKeyListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener {
+
+    //Location variables
+    private GoogleApiClient googleApiClient;
+    private LocationRequest locationRequest;
+    private double lLat, lLong;
+    private String sCity, sState;
+    //
 
     String[] Cities = new String[]{
             "Monterrey, Nuevo Leon", "San Francisco , California", "Los Angeles , California", "Germany", "Spain"
@@ -177,6 +195,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     ImageButton btShowLocation;
     TextView tvLocation;
     CheckBox cbCurrentLocation;
+    String country = "";
+    boolean internet = true;
     int sbprogress;
     int RiskType;
 
@@ -190,6 +210,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        googleApiClient = new GoogleApiClient.Builder(this)
+                .addApi(LocationServices.API)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .build();
 
         LinearLayoutManager layoutManager
                 = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
@@ -224,10 +250,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked){
-                    vMax.setVisibility(View.VISIBLE);
-                }else {
-                    vMax.setVisibility(View.INVISIBLE);
-                    vMax.setVisibility(View.INVISIBLE);
+                    new RetrieveLocation().execute();
                 }
             }
         });
@@ -272,6 +295,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
 
+        if (!isInternetAvailable()){
+            internet = false;
+            new AlertDialog.Builder(this).setTitle("Internet Connection").setMessage("Please check your internet connection").setNeutralButton("Close", null).show();
+        }
+
         //Auto Complete Text View
         adapterAutoComplete = new ArrayAdapter<String>(this,
                 android.R.layout.simple_dropdown_item_1line, Cities);
@@ -279,7 +307,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         etLocation = (AutoCompleteTextView) findViewById(R.id.editText_address);
         etLocation.setAdapter(adapterAutoComplete);
         etLocation.setOnKeyListener(this);
-        etLocation.setThreshold(5);
+        etLocation.setThreshold(3);
         etLocation.addTextChangedListener(textWatcher);
     }
 
@@ -289,10 +317,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
             if (start ==  4) {
-                //MARK: Get Weather
-                InputMethodManager in = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                in.hideSoftInputFromWindow(etLocation.getApplicationWindowToken(),InputMethodManager.HIDE_NOT_ALWAYS);
-                new RetrieveAutoComplete().execute();
+                if (!isInternetAvailable()){
+                    internet = false;
+                    new AlertDialog.Builder(MainActivity.this).setTitle("Internet Connection").setMessage("Please check your internet connection").setNeutralButton("Close", null).show();
+                } else {
+                    internet = true;
+                    //MARK: Get Weather
+                    InputMethodManager in = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    in.hideSoftInputFromWindow(etLocation.getApplicationWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                    new RetrieveAutoComplete().execute();
+                }
             }
         }
 
@@ -400,6 +434,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         dummyData.add(dummy);
 
         return dummyData ;
+    }
+
+
+    public boolean isInternetAvailable() {
+        ConnectivityManager cm =
+                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        return netInfo != null && netInfo.isConnectedOrConnecting();
     }
 
     double getRisk (double temperature, String humidity){
@@ -539,21 +581,33 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Log.d("Conexion","String transformed: " + Location);
 
             try {
-                URL url = new URL("http://api.wunderground.com/api/25d0f02c485109f2/conditions/hourly/q/"+ states.get(state) + "/" +Location+".json");
-                HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-                Log.d("Connecion","Retrieving weather from: " + url);
-                try {
-                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
-                    StringBuilder stringBuilder = new StringBuilder();
-                    String line;
-                    while ((line = bufferedReader.readLine()) != null) {
-                        stringBuilder.append(line).append("\n");
+
+
+                if (internet) {
+                    URL url;
+                    if (states.get(state) != null) {
+                        url = new URL("http://api.wunderground.com/api/25d0f02c485109f2/conditions/hourly/q/" + states.get(state) + "/" + Location + ".json");
+                    } else if (Location.equals("Monterrey")){
+                        url = new URL("http://api.wunderground.com/api/25d0f02c485109f2/conditions/hourly/q/25.87,-100.20.json");
+                    }else {
+                        url = new URL("http://api.wunderground.com/api/25d0f02c485109f2/conditions/hourly/q/" + state + "/" + Location + ".json");
                     }
-                    bufferedReader.close();
-                    return stringBuilder.toString();
-                }
-                finally{
-                    urlConnection.disconnect();
+                    HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+                    Log.d("Connecion", "Retrieving weather from: " + url);
+                    try {
+                        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+                        StringBuilder stringBuilder = new StringBuilder();
+                        String line;
+                        while ((line = bufferedReader.readLine()) != null) {
+                            stringBuilder.append(line).append("\n");
+                        }
+                        bufferedReader.close();
+                        return stringBuilder.toString();
+                    } finally {
+                        urlConnection.disconnect();
+                    }
+                } else {
+                    return null;
                 }
             }
             catch(Exception e) {
@@ -627,27 +681,31 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         protected String doInBackground(Void... urls) {
-
             // Do some validation here
             Location = Location.replaceAll("\\s+", "%20");
             Log.d("Conexion","String transformed: " + Location);
 
+
             try {
-                URL url = new URL("http://autocomplete.wunderground.com/aq?query=" + Location);
-                HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-                Log.d("Connecion","Retrieving weather from: " + url);
-                try {
-                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
-                    StringBuilder stringBuilder = new StringBuilder();
-                    String line;
-                    while ((line = bufferedReader.readLine()) != null) {
-                        stringBuilder.append(line).append("\n");
+                if (internet){
+                    URL url = new URL("http://autocomplete.wunderground.com/aq?query=" + Location);
+                    HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+                    Log.d("Connecion","Retrieving weather from: " + url);
+                    try {
+                        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+                        StringBuilder stringBuilder = new StringBuilder();
+                        String line;
+                        while ((line = bufferedReader.readLine()) != null) {
+                            stringBuilder.append(line).append("\n");
+                        }
+                        bufferedReader.close();
+                        return stringBuilder.toString();
                     }
-                    bufferedReader.close();
-                    return stringBuilder.toString();
-                }
-                finally{
-                    urlConnection.disconnect();
+                    finally{
+                        urlConnection.disconnect();
+                    }
+                } else {
+                    return null;
                 }
             }
             catch(Exception e) {
@@ -684,6 +742,132 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 etLocation.setAdapter(adapterAutoComplete);
                 adapterAutoComplete.notifyDataSetChanged();
 
+            } catch (JSONException e){
+                Log.e("ERROR", e.getMessage(), e);
+            }
+
+        }
+    }
+
+    //MARK: LOCATION
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+        locationRequest = LocationRequest.create();
+        locationRequest.setPriority(LocationRequest.PRIORITY_LOW_POWER);
+        locationRequest.setInterval(300000);
+
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this);
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
+    }
+
+    @Override
+    protected void onStart(){
+        super.onStart();
+        googleApiClient.connect();
+    }
+
+    @Override
+    protected void onStop(){
+        super.onStop();
+        googleApiClient.disconnect();
+    }
+
+    @Override
+    public void onLocationChanged(android.location.Location location) {
+        lLat = location.getLatitude();
+        lLong = location.getLongitude();
+        Log.d("MainAct",String.valueOf(lLat)+String.valueOf(lLong));
+        //new RetrieveLocation().execute();
+    }
+
+    class RetrieveLocation extends AsyncTask<Void, Void, String> {
+
+        private Exception exception;
+
+        protected void onPreExecute() {
+        }
+
+        protected String doInBackground(Void... urls) {
+            try {
+                URL url = new URL("https://maps.googleapis.com/maps/api/geocode/json?latlng="+lLat+","+lLong+"&key=AIzaSyClNTvnFptk7EH8p1RynvJ1km0a6MyFLdA");
+                HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+                Log.d("Connecion","Location from: " + url);
+                try {
+                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+                    StringBuilder stringBuilder = new StringBuilder();
+                    String line;
+                    while ((line = bufferedReader.readLine()) != null) {
+                        stringBuilder.append(line).append("\n");
+                    }
+                    bufferedReader.close();
+                    return stringBuilder.toString();
+                }
+                finally{
+                    urlConnection.disconnect();
+                }
+            }
+            catch(Exception e) {
+                Log.e("ERROR", e.getMessage(), e);
+                return null;
+            }
+        }
+
+        protected void onPostExecute(String response) {
+            if(response == null) {
+                response = "THERE WAS AN ERROR";
+            }
+            Log.i("INFO", response);
+
+            try {
+
+                JSONObject object = (JSONObject) new JSONTokener(response).nextValue();
+                JSONArray results = object.getJSONArray("results");
+                JSONObject object1 = results.getJSONObject(0);
+                JSONArray address_components = object1.getJSONArray("address_components");
+                JSONObject object2;
+
+                boolean bstate=false,bcity=false, bcountry = false;
+                for(int i=0; i<address_components.length(); i++){
+                    object2 = address_components.getJSONObject(i);
+                    String type = object2.getString("types");
+                    if(type.contains("administrative_area_level_1")){
+                        sState=object2.getString("long_name");
+                        Log.d("STATE",sState);
+                        bstate=true;
+                    }
+                    if(type.contains("administrative_area_level_2")){
+                        sCity=object2.getString("long_name");
+                        Log.d("CITY",sCity);
+                        bcity=true;
+                    }
+                    if(type.contains("country")){
+                        country=object2.getString("long_name");
+                        Log.d("COUNTRY",country);
+                        bcountry = true;
+                    }
+                }
+                if(bcity && bstate && bcountry){
+                    etLocation.setText(sCity+", "+sState);
+                }
             } catch (JSONException e){
                 Log.e("ERROR", e.getMessage(), e);
             }
