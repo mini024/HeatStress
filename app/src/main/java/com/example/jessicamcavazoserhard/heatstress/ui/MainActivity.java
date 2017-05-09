@@ -67,6 +67,7 @@ import org.json.JSONTokener;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.InetAddress;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -191,6 +192,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     ImageButton btShowLocation;
     TextView tvLocation;
     CheckBox cbCurrentLocation;
+    String country;
     int sbprogress;
 
     final double c1=16.923,c2=0.185212,c3=5.37941,c4=-0.100254,c5=0.00941695,c6=0.00728898,c7=0.000345372,c8=-0.000814971,c9=0.0000102102,c10=-0.000038646,c11=0.0000291583,c12=0.00000142721,c13=0.000000197483,c14=-0.0000000218429,c15=0.000000000843296,c16=-0.0000000000481975;
@@ -417,6 +419,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         return dummyData ;
     }
 
+    public boolean isInternetAvailable() {
+        try {
+            InetAddress ipAddr = InetAddress.getByName("google.com"); //You can replace it with your name
+            return !ipAddr.equals("");
+
+        } catch (Exception e) {
+            return false;
+        }
+
+    }
+
 
     void calculateRisk (double temperature, String humidity, TextView tv ){
 
@@ -552,7 +565,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Log.d("Conexion","String transformed: " + Location);
 
             try {
-                URL url = new URL("http://api.wunderground.com/api/25d0f02c485109f2/conditions/hourly/q/"+ states.get(state) + "/" +Location+".json");
+                if (country != "United States"){
+                    URL url = new URL("http://api.wunderground.com/api/25d0f02c485109f2/conditions/hourly/q/"+ country + "/" +Location+".json");
+                } else {
+                    URL url = new URL("http://api.wunderground.com/api/25d0f02c485109f2/conditions/hourly/q/"+ states.get(state) + "/" +Location+".json");
+                }
                 HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
                 Log.d("Connecion","Retrieving weather from: " + url);
                 try {
@@ -686,7 +703,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    //Location functions
+    //MARK: LOCATION
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         locationRequest = LocationRequest.create();
@@ -782,7 +799,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 JSONArray address_components = object1.getJSONArray("address_components");
                 JSONObject object2;
 
-                boolean bstate=false,bcity=false;
+                boolean bstate=false,bcity=false, bcountry = false;
                 for(int i=0; i<address_components.length(); i++){
                     object2 = address_components.getJSONObject(i);
                     String type = object2.getString("types");
@@ -796,8 +813,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         Log.d("CITY",sCity);
                         bcity=true;
                     }
+                    if(type.contains("country")){
+                        country=object2.getString("long_name");
+                        Log.d("COUNTRY",country);
+                        bcountry = true;
+                    }
                 }
-                if(bcity && bstate){
+                if(bcity && bstate && bcountry){
                     etLocation.setText(sCity+", "+sState);
                 }
             } catch (JSONException e){
