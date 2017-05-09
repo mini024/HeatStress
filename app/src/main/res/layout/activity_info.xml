@@ -26,9 +26,8 @@
         android:layout_width="35dp"
         android:layout_height="35dp"
         app:srcCompat="@drawable/smile_face"
-        android:layout_below="@+id/image_MoreInfo"
-        android:layout_alignStart="@+id/text_Emergencies"
-        android:layout_marginStart="14dp" />
+        android:layout_alignParentTop="true"
+        android:layout_alignStart="@+id/text_Dont" />
 
     <TextView
         android:id="@+id/text_Do"
@@ -43,13 +42,14 @@
 
     <TextView
         android:id="@+id/text_DoRecomendations"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/text_Do"
         android:layout_marginTop="14dp"
         android:text="TextView"
-        android:layout_below="@+id/text_Do"
-        android:layout_centerHorizontal="true"
-        android:textColor="@android:color/white" />
+        android:textAlignment="viewStart"
+        android:textColor="@android:color/white"
+        android:textSize="12sp" />
 
     <ImageView
         android:id="@+id/image_Dont"
@@ -58,7 +58,7 @@
         app:srcCompat="@drawable/sick_face"
         android:layout_marginTop="31dp"
         android:layout_below="@+id/text_DoRecomendations"
-        android:layout_alignEnd="@+id/text_Emergencies" />
+        android:layout_toEndOf="@+id/text_Do" />
 
     <TextView
         android:id="@+id/text_Dont"
@@ -69,17 +69,19 @@
         android:textSize="30sp"
         android:textStyle="bold"
         android:layout_alignTop="@+id/image_Dont"
-        android:layout_centerHorizontal="true" />
+        android:layout_alignEnd="@+id/text_Do"
+        android:layout_marginEnd="16dp" />
 
     <TextView
         android:id="@+id/text_DontRecomendations"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:text="TextView"
+        android:layout_alignParentStart="true"
         android:layout_below="@+id/text_Dont"
-        android:layout_alignStart="@+id/text_Dont"
-        android:textColor="@android:color/white" />
+        android:layout_marginTop="13dp"
+        android:text="TextView"
+        android:textColor="@android:color/white"
+        android:textSize="12sp" />
 
     <ImageView
         android:id="@+id/image_Telephone"
@@ -108,10 +110,9 @@
         android:text="@string/Emargency_Recomendations"
         android:textSize="12sp"
         android:textStyle="bold"
-        android:layout_marginBottom="15dp"
+        android:textColor="@android:color/white"
         android:layout_above="@+id/seek_Call911"
-        android:layout_alignStart="@+id/image_Telephone"
-        android:textColor="@android:color/white" />
+        android:layout_alignStart="@+id/image_Telephone" />
 
     <ImageButton
         android:id="@+id/image_MoreInfo"

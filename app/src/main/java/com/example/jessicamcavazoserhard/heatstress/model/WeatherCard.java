@@ -24,8 +24,9 @@ package com.example.jessicamcavazoserhard.heatstress.model;
 
 public class WeatherCard {
 
-    private String sHour, sWeather;
+    private String sHour, sWeather, color;
     private int iTemperature, iHumidity;
+
 
     public WeatherCard(){
         this.sHour="";
@@ -34,11 +35,12 @@ public class WeatherCard {
         this.iHumidity=0;
     }
 
-    public WeatherCard (String sHour, String sWeather, int iTemperature, int iHumidity){
+    public WeatherCard (String sHour, String sWeather, int iTemperature, int iHumidity, String color){
         this.sHour=sHour;
         this.sWeather=sWeather;
         this.iTemperature=iTemperature;
         this.iHumidity=iHumidity;
+        this.color = color;
     }
 
     public String getsHour() {
@@ -71,5 +73,13 @@ public class WeatherCard {
 
     public void setiHumidity(int iHumidity) {
         this.iHumidity = iHumidity;
+    }
+
+    public String getColor() {
+        return color;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
     }
 }
