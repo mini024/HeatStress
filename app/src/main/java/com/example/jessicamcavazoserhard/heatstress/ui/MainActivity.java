@@ -578,11 +578,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             try {
                 if (internet) {
                     URL url;
-                    if (country != "United States" && country != "") {
-                        url = new URL("http://api.wunderground.com/api/25d0f02c485109f2/conditions/hourly/q/" + country + "/" + Location + ".json");
-                    } else if (states.get(state) != null) {
+                    if (states.get(state) != null) {
                         url = new URL("http://api.wunderground.com/api/25d0f02c485109f2/conditions/hourly/q/" + states.get(state) + "/" + Location + ".json");
-                    } else {
+                    } else if (Location.equals("Monterrey")){
+                        url = new URL("http://api.wunderground.com/api/25d0f02c485109f2/conditions/hourly/q/25.87,-100.20.json");
+                    }else {
                         url = new URL("http://api.wunderground.com/api/25d0f02c485109f2/conditions/hourly/q/" + state + "/" + Location + ".json");
                     }
                     HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
