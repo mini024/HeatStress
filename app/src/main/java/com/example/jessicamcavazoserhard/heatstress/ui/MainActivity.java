@@ -197,7 +197,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     TextView tvLocation;
     CheckBox cbCurrentLocation;
     String country = "";
-    boolean internet = true;
+    boolean internet;
     int sbprogress;
     int RiskType;
 
@@ -248,12 +248,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         tvLocation = (TextView) findViewById(R.id.textView_location);
 
+        isInternetAvailable();
+
         cbCurrentLocation = (CheckBox) findViewById(R.id.checkBox2);
         cbCurrentLocation.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked){
+                    if(isInternetAvailable()){
                     new RetrieveLocation().execute();
+                    } else{
+                        new AlertDialog.Builder(MainActivity.this).setTitle("Internet Connection").setMessage("Please check your internet connection").setNeutralButton("Close", null).show();
+                    }
                 }
             }
         });
@@ -448,7 +454,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         ConnectivityManager cm =
                 (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo netInfo = cm.getActiveNetworkInfo();
-        return netInfo != null && netInfo.isConnectedOrConnecting();
+        if( netInfo != null && netInfo.isConnectedOrConnecting()){
+            internet=true;
+            return true;
+        } else {
+            internet=false;
+            return false;
+        }
     }
 
     double getRisk (double temperature, String humidity){
@@ -620,7 +632,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             String state = Location.substring(Location.indexOf(","));
             Location = Location.replace(state, "");
             state = state.replace(", ", "");
+            state = state.replaceAll(" ", "_");
+            state = state.replaceAll("\\s+", "_");
             Location = Location.replaceAll("\\s+", "_");
+            Location = Location.replaceAll(" ", "_");
+
             Log.d("Conexion","String transformed: " + Location);
 
             try {
@@ -667,7 +683,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if (internet){
                     JSONObject object = (JSONObject) new JSONTokener(response).nextValue();
 
-                    humidity = object.getJSONObject("current_observation").getString("relative_humidity");
+                    if(!object.has("current_observation")){
+                        Toast.makeText(getApplicationContext(), "No information available \n for this location", Toast.LENGTH_SHORT).show();
+                    } else{
+                        humidity = object.getJSONObject("current_observation").getString("relative_humidity");
+                    }
 
                     Log.d("Query", object.toString());
 
@@ -724,6 +744,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         protected String doInBackground(Void... urls) {
             // Do some validation here
             Location = Location.replaceAll("\\s+", "%20");
+            Location = Location.replaceAll(" ", "%20");
             Log.d("Conexion","String transformed: " + Location);
 
             try {
@@ -895,7 +916,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         object2 = address_components.getJSONObject(i);
                         String type = object2.getString("types");
                         if(type.contains("administrative_area_level_1")){
-                            sState=object2.getString("long_name");
+                            sState=object2.getString("short_name");
                             Log.d("STATE",sState);
                             bstate=true;
                         }
@@ -911,7 +932,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         }
                     }
                     if(bcity && bstate && bcountry){
-                        etLocation.setText(sCity+", "+sState);
+                        etLocation.setText(sCity+", "+country);
                     }
                 }
             } catch (JSONException e){
