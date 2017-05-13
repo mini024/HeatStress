@@ -13,7 +13,7 @@
         android:layout_height="match_parent"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:background="@color/colorAccent"
+        android:background="@color/card_colorYellow"
         android:gravity="center_horizontal">
 
         <TextView
@@ -76,7 +76,7 @@
                     android:layout_width="32dp"
                     android:layout_height="32dp"
                     android:layout_weight="1"
-                    app:srcCompat="@mipmap/ic_launcher" />
+                    app:srcCompat="@color/colorPrimary" />
 
                 <TextView
                     android:id="@+id/tv_hum_card"
