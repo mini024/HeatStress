@@ -252,8 +252,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         cbCurrentLocation.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked){
+                if(isChecked && isInternetAvailable()){
                     new RetrieveLocation().execute();
+                } else {
+                    internet = false;
+                    new AlertDialog.Builder(MainActivity.this).setTitle("Internet Connection").setMessage("Please check your internet connection").setNeutralButton("Close", null).show();
                 }
             }
         });
@@ -354,7 +357,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 startActivity(i);
                 break;
             case R.id.imageButton_showLocation:
-                ShowLocation();
+                if (isInternetAvailable()){
+                    ShowLocation();
+                } else {
+                    internet = false;
+                    new AlertDialog.Builder(MainActivity.this).setTitle("Internet Connection").setMessage("Please check your internet connection").setNeutralButton("Close", null).show();
+                }
                 break;
         }
 
@@ -653,6 +661,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
             catch(Exception e) {
                 Log.e("ERROR", e.getMessage(), e);
+                new AlertDialog.Builder(MainActivity.this).setTitle("Location Error").setMessage(e.getMessage()).setNeutralButton("Close", null).show();
+
                 return null;
             }
         }
@@ -706,6 +716,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             } catch (JSONException e){
                 Log.e("ERROR", e.getMessage(), e);
+                new AlertDialog.Builder(MainActivity.this).setTitle("Location Error").setMessage(e.getMessage()).setNeutralButton("Close", null).show();
             }
 
         }
@@ -750,6 +761,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
             catch(Exception e) {
                 Log.e("ERROR", e.getMessage(), e);
+                new AlertDialog.Builder(MainActivity.this).setTitle("Autocomplete Error").setMessage(e.getMessage()).setNeutralButton("Close", null).show();
                 return null;
             }
         }
