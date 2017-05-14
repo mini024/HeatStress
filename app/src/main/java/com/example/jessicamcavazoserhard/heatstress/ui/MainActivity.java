@@ -22,6 +22,7 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -197,11 +198,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     TextView tvLocation;
     CheckBox cbCurrentLocation;
     String country = "";
-    boolean internet = true;
+    boolean internet;
     int sbprogress;
     int RiskType;
+    View FilterView;
 
     final double c1=16.923,c2=0.185212,c3=5.37941,c4=-0.100254,c5=0.00941695,c6=0.00728898,c7=0.000345372,c8=-0.000814971,c9=0.0000102102,c10=-0.000038646,c11=0.0000291583,c12=0.00000142721,c13=0.000000197483,c14=-0.0000000218429,c15=0.000000000843296,c16=-0.0000000000481975;
+
+    int colorSunny, colorCloudy, colorRainy, colorWindy, colorSnowy, colorPCloudy;
 
     //Max temps and humidity
     PriorityQueue<Integer> pqRisk;
@@ -223,6 +227,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         LinearLayoutManager layoutManager
                 = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
 
+        //MARK: CREATE COLORS
+        colorSunny = Color.parseColor("#5bE1BB22");
+        colorRainy = Color.parseColor("#5b528DD4");
+        colorCloudy = Color.parseColor("#5b6D6C6A");
+        colorWindy = Color.parseColor("#5bDA7736");
+        colorSnowy = Color.parseColor("#FFFFFF");
+        colorPCloudy = Color.parseColor("#5b749BCA");
+
+
         listData = getData();
 
         recyclerView = (RecyclerView) findViewById(R.id.rec_view_main);
@@ -241,12 +254,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         tvMaxTemp = (TextView) findViewById(R.id.textView_temperatureMax);
         tvMaxRisk = (TextView) findViewById(R.id.tv_main_max_risk);
         vMax = findViewById(R.id.view_main_max);
+        FilterView = findViewById(R.id.filterView);
         btGo.setOnClickListener(this);
 
         btShowLocation = (ImageButton) findViewById(R.id.imageButton_showLocation);
         btShowLocation.setOnClickListener(this);
 
         tvLocation = (TextView) findViewById(R.id.textView_location);
+
+        isInternetAvailable();
 
         cbCurrentLocation = (CheckBox) findViewById(R.id.checkBox2);
         cbCurrentLocation.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -258,6 +274,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     internet = false;
                     new AlertDialog.Builder(MainActivity.this).setTitle("Internet Connection").setMessage("Please check your internet connection").setNeutralButton("Close", null).show();
                 }
+
             }
         });
 
@@ -456,7 +473,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         ConnectivityManager cm =
                 (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo netInfo = cm.getActiveNetworkInfo();
-        return netInfo != null && netInfo.isConnectedOrConnecting();
+        if( netInfo != null && netInfo.isConnectedOrConnecting()){
+            internet=true;
+            return true;
+        } else {
+            internet=false;
+            return false;
+        }
     }
 
     double getRisk (double temperature, String humidity){
@@ -628,7 +651,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             String state = Location.substring(Location.indexOf(","));
             Location = Location.replace(state, "");
             state = state.replace(", ", "");
+            state = state.replaceAll(" ", "_");
+            state = state.replaceAll("\\s+", "_");
             Location = Location.replaceAll("\\s+", "_");
+            Location = Location.replaceAll(" ", "_");
+
             Log.d("Conexion","String transformed: " + Location);
 
             try {
@@ -677,12 +704,35 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if (internet){
                     JSONObject object = (JSONObject) new JSONTokener(response).nextValue();
 
-                    humidity = object.getJSONObject("current_observation").getString("relative_humidity");
+                    if(!object.has("current_observation")){
+                        Toast.makeText(getApplicationContext(), "No information available \n for this location", Toast.LENGTH_SHORT).show();
+                    } else{
+                        humidity = object.getJSONObject("current_observation").getString("relative_humidity");
+                    }
 
                     Log.d("Query", object.toString());
 
                     temperature = object.getJSONObject("current_observation").getString("temp_f");
                     Log.d("Humedad","HUMEDAD EN SAN FRANCISCO : " + humidity);
+
+                    String weather = object.getJSONObject("current_observation").getString("weather");
+
+                    switch (weather){
+                        case "Rainy": FilterView.setBackgroundColor(colorRainy);
+                            break;
+                        case "Clear": FilterView.setBackgroundColor(colorSunny);
+                            break;
+                        case "Partly Cloudy": FilterView.setBackgroundColor(colorPCloudy);
+                            break;
+                        case "Mostly Cloudy": FilterView.setBackgroundColor(colorCloudy);
+                            break;
+                        case "Cloudy": FilterView.setBackgroundColor(colorCloudy);
+                            break;
+                        case "Windy": FilterView.setBackgroundColor(colorWindy);
+                            break;
+                        case "Snowy": FilterView.setBackgroundColor(colorSnowy);
+                            break;
+                    }
 
                     tvCurrentTemperature.setText(temperature + " ºF");
 
@@ -735,6 +785,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         protected String doInBackground(Void... urls) {
             // Do some validation here
             Location = Location.replaceAll("\\s+", "%20");
+            Location = Location.replaceAll(" ", "%20");
             Log.d("Conexion","String transformed: " + Location);
 
             try {
@@ -907,7 +958,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         object2 = address_components.getJSONObject(i);
                         String type = object2.getString("types");
                         if(type.contains("administrative_area_level_1")){
-                            sState=object2.getString("long_name");
+                            sState=object2.getString("short_name");
                             Log.d("STATE",sState);
                             bstate=true;
                         }
@@ -923,7 +974,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         }
                     }
                     if(bcity && bstate && bcountry){
-                        etLocation.setText(sCity+", "+sState);
+                        etLocation.setText(sCity+", "+country);
                     }
                 }
             } catch (JSONException e){

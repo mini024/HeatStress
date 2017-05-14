@@ -5,10 +5,19 @@
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="@drawable/background"
+    android:tint="@color/card_colorOrange"
+    android:orientation="vertical"
     android:windowSoftInputMode="adjustPan"
     tools:context="com.example.jessicamcavazoserhard.heatstress.ui.MainActivity">
+
+    <!-- add your views here -->
+
+    <View
+        android:id="@+id/filterView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#A02F72C4" />
 
     <AutoCompleteTextView
         android:id="@+id/editText_address"
@@ -40,12 +49,12 @@
         android:visibility="gone" />
 
     <android.support.v7.widget.RecyclerView
-        android:layout_weight="1"
+        android:id="@+id/rec_view_main"
         android:layout_width="match_parent"
         android:layout_height="150dp"
-        android:id="@+id/rec_view_main"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:layout_weight="1" />
 
     <CheckBox
         android:id="@+id/checkBox2"
@@ -57,71 +66,77 @@
         android:visibility="visible" />
 
     <LinearLayout
-        android:layout_weight="1"
+        android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_above="@+id/seek_Call911"
+        android:layout_alignParentStart="true"
+        android:layout_weight="1"
         android:orientation="horizontal"
         android:weightSum="2"
-        android:layout_above="@+id/seek_Call911"
-        android:windowSoftInputMode="adjustPan"
-        android:layout_alignParentStart="true"
-        android:id="@+id/linearLayout">
+        android:windowSoftInputMode="adjustPan">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
             android:layout_weight="1"
+            android:orientation="horizontal"
             android:weightSum="5">
+
             <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/water"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_weight="2"
                 android:contentDescription="humidity"
-                android:layout_weight="2"/>
+                android:src="@drawable/drops" />
+
             <TextView
                 android:id="@+id/textView_humidityValue"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:text="--"
                 android:textColor="@android:color/white"
-                android:textSize="36sp"
-                android:layout_weight="1"/>
+                android:textSize="36sp" />
 
         </LinearLayout>
+
         <LinearLayout
 
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
             android:layout_weight="1"
+            android:orientation="horizontal"
             android:weightSum="5">
+
             <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/temperature"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_weight="2"
                 android:contentDescription="humidity"
-                android:layout_weight="2"/>
+                android:src="@drawable/temperature" />
+
             <TextView
                 android:id="@+id/textView_temperatureValue"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:text="--"
                 android:textColor="@android:color/white"
-                android:textSize="36sp"
-                android:layout_weight="1"/>
+                android:textSize="36sp" />
 
         </LinearLayout>
     </LinearLayout>
 
     <SeekBar
-        android:layout_weight="1"
-        android:windowSoftInputMode="adjustPan"
         android:id="@+id/seek_Call911"
         android:layout_width="match_parent"
         android:layout_height="35dp"
-        android:thumb="@drawable/phone_slider"
         android:layout_above="@+id/rec_view_main"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:layout_weight="1"
+        android:thumb="@drawable/phone_slider"
+        android:windowSoftInputMode="adjustPan" />
 
     <ImageButton
         android:id="@+id/imageButton_showLocation"
@@ -201,21 +216,21 @@
                 android:textSize="18sp" />
 
             <LinearLayout
+                android:id="@+id/linearLayout3"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_below="@+id/linearLayout2"
                 android:layout_weight="1"
                 android:orientation="horizontal"
-                android:weightSum="5"
-                android:id="@+id/linearLayout3">
+                android:weightSum="5">
 
                 <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
                     android:layout_weight="2"
                     android:contentDescription="humidity"
-                    android:src="@drawable/water" />
+                    android:src="@drawable/drops" />
 
                 <TextView
                     android:id="@+id/textView_humidityMax"
@@ -241,11 +256,11 @@
                 android:weightSum="5">
 
                 <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
                     android:layout_weight="2"
                     android:contentDescription="humidity"
-                    android:src="@drawable/temperature" />
+                    android:src="@drawable/temp" />
 
                 <TextView
                     android:id="@+id/textView_temperatureMax"
@@ -262,11 +277,11 @@
                 android:id="@+id/tv_main_max_risk"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_below="@+id/linearLayout3"
+                android:layout_centerHorizontal="true"
                 android:layout_weight="2"
                 android:text="Minimal risk"
-                android:textColor="@android:color/background_light"
-                android:layout_below="@+id/linearLayout3"
-                android:layout_centerHorizontal="true" />
+                android:textColor="@android:color/background_light" />
 
         </RelativeLayout>
 
