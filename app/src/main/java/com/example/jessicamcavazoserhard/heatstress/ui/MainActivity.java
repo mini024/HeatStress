@@ -22,8 +22,6 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
-import android.location.Location;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -45,16 +43,12 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.Toast;
 import android.widget.TextView;
-import android.widget.WrapperListAdapter;
-
 import com.example.jessicamcavazoserhard.heatstress.GlobalData;
 import com.example.jessicamcavazoserhard.heatstress.R;
 import com.example.jessicamcavazoserhard.heatstress.adapter.WeatherCardAdapter;
@@ -63,19 +57,15 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
-
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.InetAddress;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
@@ -205,8 +195,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     final double c1=16.923,c2=0.185212,c3=5.37941,c4=-0.100254,c5=0.00941695,c6=0.00728898,c7=0.000345372,c8=-0.000814971,c9=0.0000102102,c10=-0.000038646,c11=0.0000291583,c12=0.00000142721,c13=0.000000197483,c14=-0.0000000218429,c15=0.000000000843296,c16=-0.0000000000481975;
 
-    int colorSunny, colorCloudy, colorRainy, colorWindy, colorSnowy, colorPCloudy;
-
     //Max temps and humidity
     PriorityQueue<Integer> pqRisk;
     Map mapTemps, mapHums, mapType;
@@ -226,14 +214,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         LinearLayoutManager layoutManager
                 = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
-
-        //MARK: CREATE COLORS
-        colorSunny = Color.parseColor("#5bE1BB22");
-        colorRainy = Color.parseColor("#5b528DD4");
-        colorCloudy = Color.parseColor("#5b6D6C6A");
-        colorWindy = Color.parseColor("#5bDA7736");
-        colorSnowy = Color.parseColor("#FFFFFF");
-        colorPCloudy = Color.parseColor("#5b749BCA");
 
 
         listData = getData();
@@ -707,25 +687,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                     temperature = object.getJSONObject("current_observation").getString("temp_f");
                     Log.d("Humedad","HUMEDAD EN SAN FRANCISCO : " + humidity);
-
-                    String weather = object.getJSONObject("current_observation").getString("weather");
-
-                    switch (weather){
-                        case "Rainy": FilterView.setBackgroundColor(colorRainy);
-                            break;
-                        case "Clear": FilterView.setBackgroundColor(colorSunny);
-                            break;
-                        case "Partly Cloudy": FilterView.setBackgroundColor(colorPCloudy);
-                            break;
-                        case "Mostly Cloudy": FilterView.setBackgroundColor(colorCloudy);
-                            break;
-                        case "Cloudy": FilterView.setBackgroundColor(colorCloudy);
-                            break;
-                        case "Windy": FilterView.setBackgroundColor(colorWindy);
-                            break;
-                        case "Snowy": FilterView.setBackgroundColor(colorSnowy);
-                            break;
-                    }
 
                     tvCurrentTemperature.setText(temperature + " ºF");
 

@@ -17,7 +17,7 @@
         android:id="@+id/filterView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#A02F72C4" />
+        android:background="@color/card_colorYellow" />
 
     <AutoCompleteTextView
         android:id="@+id/editText_address"
@@ -260,7 +260,7 @@
                     android:layout_height="50dp"
                     android:layout_weight="2"
                     android:contentDescription="humidity"
-                    android:src="@drawable/temp" />
+                    android:src="@drawable/temperature" />
 
                 <TextView
                     android:id="@+id/textView_temperatureMax"

@@ -44,20 +44,21 @@
         android:id="@+id/text_DoRecomendations"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/text_Do"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/image_Do"
         android:layout_marginTop="14dp"
-        android:text="TextView"
-        android:textAlignment="viewStart"
+        android:text="@string/high_DO_REQ"
+        android:textAlignment="center"
         android:textColor="@android:color/white"
-        android:textSize="12sp" />
+        android:textSize="15sp"
+        android:textStyle="bold" />
 
     <ImageView
         android:id="@+id/image_Dont"
         android:layout_width="35dp"
         android:layout_height="35dp"
         app:srcCompat="@drawable/sick_face"
-        android:layout_marginTop="31dp"
-        android:layout_below="@+id/text_DoRecomendations"
+        android:layout_alignBottom="@+id/text_Dont"
         android:layout_toEndOf="@+id/text_Do" />
 
     <TextView
@@ -68,20 +69,22 @@
         android:textColor="@android:color/holo_orange_light"
         android:textSize="30sp"
         android:textStyle="bold"
-        android:layout_alignTop="@+id/image_Dont"
-        android:layout_alignEnd="@+id/text_Do"
-        android:layout_marginEnd="16dp" />
+        android:layout_marginEnd="16dp"
+        android:layout_below="@+id/text_DoRecomendations"
+        android:layout_toStartOf="@+id/image_Dont"
+        android:layout_marginTop="17dp" />
 
     <TextView
         android:id="@+id/text_DontRecomendations"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/text_Dont"
-        android:layout_marginTop="13dp"
-        android:text="TextView"
+        android:layout_below="@+id/image_Dont"
+        android:text="@string/high_DONT_REQ"
+        android:textAlignment="center"
         android:textColor="@android:color/white"
-        android:textSize="12sp" />
+        android:textSize="15sp"
+        android:textStyle="bold" />
 
     <ImageView
         android:id="@+id/image_Telephone"
@@ -99,20 +102,20 @@
         android:textColor="@android:color/holo_red_dark"
         android:textSize="30sp"
         android:textStyle="bold"
+        android:layout_marginBottom="13dp"
         android:layout_above="@+id/text_EMsymptoms"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="14dp" />
+        android:layout_centerHorizontal="true" />
 
     <TextView
         android:id="@+id/text_EMsymptoms"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/Emargency_Recomendations"
-        android:textSize="12sp"
-        android:textStyle="bold"
-        android:textColor="@android:color/white"
         android:layout_above="@+id/seek_Call911"
-        android:layout_alignStart="@+id/image_Telephone" />
+        android:layout_centerHorizontal="true"
+        android:text="@string/Emargency_Recomendations"
+        android:textColor="@android:color/white"
+        android:textSize="15sp"
+        android:textStyle="bold" />
 
     <ImageButton
         android:id="@+id/image_MoreInfo"
