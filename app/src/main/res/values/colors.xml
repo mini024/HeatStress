@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#5be1bb22</color>
-    <color name="colorPrimaryDark">#00303f9f</color>
+    <color name="colorPrimary">#FFe1bb22</color>
+    <color name="colorPrimaryDark">#FF303f9f</color>
     <color name="colorAccent">#ff4081</color>
     <color name="textColorGray">#aaaaa99f</color>
     <color name="card_color">#abcaa1</color>
     <color name="card_colorRed">#dd4c3c</color>
     <color name="card_colorGreen">#ac7cad6c</color>
-    <color name="card_colorOrange">#2effffff</color>
+    <color name="card_colorOrange">#ffffff</color>
     <color name="card_colorYellow">#466d6c6a</color>
 </resources>

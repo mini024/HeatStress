@@ -6,8 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/background"
-    android:tint="@color/card_colorOrange"
     android:orientation="vertical"
+    android:tint="@color/card_colorOrange"
     android:windowSoftInputMode="adjustPan"
     tools:context="com.example.jessicamcavazoserhard.heatstress.ui.MainActivity">
 
@@ -17,7 +17,7 @@
         android:id="@+id/filterView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/card_colorYellow" />
+        android:background="@drawable/background" />
 
     <AutoCompleteTextView
         android:id="@+id/editText_address"
