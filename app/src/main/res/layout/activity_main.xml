@@ -13,12 +13,6 @@
 
     <!-- add your views here -->
 
-    <View
-        android:id="@+id/filterView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@drawable/background" />
-
     <AutoCompleteTextView
         android:id="@+id/editText_address"
         style="@style/Widget.AppCompat.EditText"
@@ -32,8 +26,9 @@
 
         android:singleLine="true"
         android:textAlignment="center"
-        android:textColor="@android:color/background_light"
+        android:textColor="@color/common_google_signin_btn_text_dark_default"
         android:textColorHint="?attr/editTextColor"
+        android:textStyle="bold"
         android:visibility="visible"
         android:windowSoftInputMode="adjustPan" />
 
@@ -44,6 +39,7 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:text="Location"
+        android:textColor="@color/common_google_signin_btn_text_dark_default"
         android:textSize="24sp"
         android:textStyle="bold"
         android:visibility="gone" />
@@ -63,7 +59,9 @@
         android:layout_below="@+id/editText_address"
         android:layout_centerHorizontal="true"
         android:text="Use Current Location"
-        android:visibility="visible" />
+        android:textColor="@color/common_google_signin_btn_text_dark_default"
+        android:visibility="visible"
+        app:buttonTint="@color/common_google_signin_btn_text_dark_default" />
 
     <LinearLayout
         android:id="@+id/linearLayout"

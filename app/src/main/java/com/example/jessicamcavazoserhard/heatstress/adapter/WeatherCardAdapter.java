@@ -19,19 +19,15 @@
 package com.example.jessicamcavazoserhard.heatstress.adapter;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.Color;
-import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.example.jessicamcavazoserhard.heatstress.GlobalData;
 import com.example.jessicamcavazoserhard.heatstress.R;
 import com.example.jessicamcavazoserhard.heatstress.model.WeatherCard;
 
@@ -46,8 +42,6 @@ public class WeatherCardAdapter extends RecyclerView.Adapter<WeatherCardAdapter.
 
     private List<WeatherCard> listData;
     private LayoutInflater inflater;
-    //Instance of global
-    GlobalData global;
 
     int card_green, card_red, card_orange, card_yellow;
 

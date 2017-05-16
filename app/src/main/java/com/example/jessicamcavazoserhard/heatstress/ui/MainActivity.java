@@ -22,6 +22,9 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -49,7 +52,8 @@ import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.Toast;
 import android.widget.TextView;
-import com.example.jessicamcavazoserhard.heatstress.GlobalData;
+
+import com.example.jessicamcavazoserhard.heatstress.BlurBuilder;
 import com.example.jessicamcavazoserhard.heatstress.R;
 import com.example.jessicamcavazoserhard.heatstress.adapter.WeatherCardAdapter;
 import com.example.jessicamcavazoserhard.heatstress.model.WeatherCard;
@@ -71,20 +75,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.PriorityQueue;
 
+import static android.R.attr.radius;
+
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, View.OnKeyListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener {
 
-    //Location variables
-    private GoogleApiClient googleApiClient;
-    private LocationRequest locationRequest;
-    private double lLat, lLong;
-    private String sCity, sState;
-    //
-
-    String[] Cities = new String[]{
-            "Monterrey, Nuevo Leon", "San Francisco , California", "Los Angeles , California", "Germany", "Spain"
-    };
-
-    //MARK - States
+    //MARK - States Variables
     public static final Map<String, String> states;
     static {
         states = new HashMap<String, String>();
@@ -160,15 +155,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         states.put("Wyoming","WY");
         states.put("Yukon Territory","YT");
     }
+    String[] Cities;
+
 
     private RecyclerView recyclerView;
     private WeatherCardAdapter adapter;
     private ArrayList<WeatherCard> listData;
     ArrayAdapter<String> adapterAutoComplete;
 
-    //Instance of global
-    GlobalData global;
-
+    //MARK - Views
     ImageButton btGo;
     AutoCompleteTextView etLocation;
     TextView tvCurrentRisk;
@@ -178,6 +173,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     TextView tvMaxTemp;
     TextView tvMaxRisk;
     View vMax;
+
+    //Location variables
+    private GoogleApiClient googleApiClient;
+    private LocationRequest locationRequest;
+    private double lLat, lLong;
+    private String sCity, sState;
+
+    //MARK - Variables
     JSONArray dataTime;
     String Location;
     String humidity;
@@ -193,7 +196,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     int RiskType;
     View FilterView;
 
-    final double c1=16.923,c2=0.185212,c3=5.37941,c4=-0.100254,c5=0.00941695,c6=0.00728898,c7=0.000345372,c8=-0.000814971,c9=0.0000102102,c10=-0.000038646,c11=0.0000291583,c12=0.00000142721,c13=0.000000197483,c14=-0.0000000218429,c15=0.000000000843296,c16=-0.0000000000481975;
+    final double c1=16.923,c2=0.185212,c3=5.37941,c4=-0.100254,c5=0.00941695,
+            c6=0.00728898,c7=0.000345372,c8=-0.000814971,c9=0.0000102102,c10=-0.000038646,
+            c11=0.0000291583,c12=0.00000142721,c13=0.000000197483,c14=-0.0000000218429,c15=0.000000000843296;
 
     //Max temps and humidity
     PriorityQueue<Integer> pqRisk;
@@ -234,7 +239,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         tvMaxTemp = (TextView) findViewById(R.id.textView_temperatureMax);
         tvMaxRisk = (TextView) findViewById(R.id.tv_main_max_risk);
         vMax = findViewById(R.id.view_main_max);
-        FilterView = findViewById(R.id.filterView);
+        FilterView = findViewById(R.id.activity_main);
         btGo.setOnClickListener(this);
 
         btShowLocation = (ImageButton) findViewById(R.id.imageButton_showLocation);
@@ -257,6 +262,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             }
         });
+
+        //Blurry background
+        Bitmap icon = BitmapFactory.decodeResource(getResources(),
+                R.drawable.background);
+
+        Bitmap blurredBitmap = BlurBuilder.blur( MainActivity.this, icon);
+
+        FilterView.setBackgroundDrawable( new BitmapDrawable( getResources(), blurredBitmap ) );
+
 
         //MARK: MAKING CALL
         sbCall = (SeekBar) findViewById(R.id.seek_Call911);
