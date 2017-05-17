@@ -132,7 +132,7 @@ public class WeatherCardAdapter extends RecyclerView.Adapter<WeatherCardAdapter.
             card_green = Color.parseColor("#5CB04F");
             card_orange = Color.parseColor("#F59323");
             card_red = Color.parseColor("#E35349");
-            card_yellow = Color.parseColor("#D9D941");
+            card_yellow = Color.parseColor("#FFF5DE11");
 
         }
 
