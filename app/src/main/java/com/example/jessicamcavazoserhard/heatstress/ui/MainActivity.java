@@ -104,7 +104,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     //Location variables
     private GoogleApiClient googleApiClient;
     private LocationRequest locationRequest;
-    private double lLat, lLong;
     private String sCity, sState;
 
     //MARK - Variables
@@ -114,6 +113,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     boolean Checked;
     int sbprogress;
     int RiskType;
+    private double lLat, lLong;
     String[] Cities = new String[]{
             "Monterrey, Mexico"
     };
@@ -174,7 +174,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         cbCurrentLocation.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-
                 Checked = isChecked;
                 if(isChecked && isInternetAvailable()){
                     //new RetrieveLocation().execute();
@@ -524,8 +523,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         protected String doInBackground(Void... urls) {
 
-            // Do some validation here
+            Log.d("Conexion","String transformed: " + lLat + lLong);
 
+            // Do some validation here
             String state="";
             if (!Checked) {
                 state = Location.substring(Location.indexOf(","));
@@ -539,9 +539,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 Log.d("Conexion", "String transformed: " + Location);
             }
-
-
-
 
             try {
                 if (internet) {
@@ -648,8 +645,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         protected String doInBackground(Void... urls) {
-            // Do some validation here
-            Location = Location.replaceAll("\\s+", "%20");
+            // Do some validation herLocation = Location.replaceAll("\\s+", "%20");
             Location = Location.replaceAll(" ", "%20");
             Log.d("Conexion","String transformed: " + Location);
 
