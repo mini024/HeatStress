@@ -61,6 +61,8 @@ import com.example.jessicamcavazoserhard.heatstress.R;
 import com.example.jessicamcavazoserhard.heatstress.TrackGPS;
 import com.example.jessicamcavazoserhard.heatstress.adapter.WeatherCardAdapter;
 import com.example.jessicamcavazoserhard.heatstress.model.WeatherCard;
+import com.google.android.gms.location.LocationRequest;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -68,6 +70,7 @@ import org.json.JSONTokener;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.SocketException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -100,6 +103,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
     //MARK - Variables
+
     private TrackGPS gps;
     String Location;
     boolean internet;
@@ -156,12 +160,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //MARK: Checkbox
         cbCurrentLocation = (CheckBox) findViewById(R.id.checkBox2);
         cbCurrentLocation.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
                 Checked = isChecked;
                 if(isChecked && isInternetAvailable()){
-                    //new RetrieveLocation().execute();
                     new RetrieveWeatherForLocation().execute();
                 } else if (!isInternetAvailable()) {
                     internet = false;
@@ -238,6 +242,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         etLocation.setOnKeyListener(this);
         etLocation.setThreshold(3);
         etLocation.addTextChangedListener(textWatcher);
+
     }
 
     //MARK: OnClick on button image and showLocation
@@ -266,6 +271,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onRestart();
         sbCall.setProgress(0);
     }
+
 
     @Override
     protected void onResume() {
@@ -545,8 +551,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     } else {
                         url = new URL("http://api.wunderground.com/api/25d0f02c485109f2/conditions/hourly/q/" + state + "/" + Location + ".json");
                     }
-                    HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-                    Log.d("Connecion", "Retrieving weather from: " + url);
+
+                        HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+                        urlConnection.setConnectTimeout(5000);
+                        Log.d("Connecion", "Retrieving weather from: " + url);
                     try {
                         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
                         StringBuilder stringBuilder = new StringBuilder();
@@ -567,11 +575,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 } else {
                     return null;
                 }
+            }catch (java.net.SocketTimeoutException e){
+                new AlertDialog.Builder(MainActivity.this).setTitle("Connection Error").setMessage("Check your network settings").setNeutralButton("Close", null).show();
+                return null;
             }
             catch(Exception e) {
                 Log.e("ERROR", e.getMessage(), e);
                 new AlertDialog.Builder(MainActivity.this).setTitle("Location Error").setMessage(e.getMessage()).setNeutralButton("Close", null).show();
-
                 return null;
             }
         }
@@ -585,6 +595,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             try {
                 String humidity;
                 String temperature;
+                String currentLocation;
                 if (internet){
                     JSONObject object = (JSONObject) new JSONTokener(response).nextValue();
 
@@ -600,10 +611,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         }
                         humidity = object.getJSONObject("current_observation").getString("relative_humidity");
                         temperature = object.getJSONObject("current_observation").getString("temp_f");
+                        currentLocation = object.getJSONObject("current_observation").getJSONObject("display_location").getString("full");
                     }
 
                     tvCurrentTemperature.setText(temperature + " ºF");
                     tvCurrentHumidity.setText(humidity);
+                    etLocation.setText(currentLocation);
 
                     double itemperature = Double.parseDouble(temperature);
                     double heatIndex = instance.getRisk(Double.parseDouble(temperature), humidity);
