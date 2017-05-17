@@ -554,7 +554,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                         HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
                         urlConnection.setConnectTimeout(5000);
-                        Log.d("Connecion", "Retrieving weather from: " + url);
+                        Log.d("Connection", "Retrieving weather from: " + url);
                     try {
                         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
                         StringBuilder stringBuilder = new StringBuilder();
