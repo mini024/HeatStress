@@ -79,7 +79,7 @@ import java.util.PriorityQueue;
 import static android.R.attr.data;
 import static android.R.attr.radius;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener, View.OnKeyListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, View.OnKeyListener, com.google.android.gms.location.LocationListener {
 
     //MARK - Elements of View
     ImageButton btGo;
@@ -101,14 +101,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private ArrayList<WeatherCard> listData;
     ArrayAdapter<String> adapterAutoComplete;
 
-    //Location variables
-    private GoogleApiClient googleApiClient;
-    private LocationRequest locationRequest;
-    private String sCity, sState;
-
     //MARK - Variables
     String Location;
-    String country = "";
     boolean internet;
     boolean Checked;
     int sbprogress;
@@ -132,26 +126,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         ContextCompat.checkSelfPermission(MainActivity.this,Manifest.permission.ACCESS_FINE_LOCATION);
 
-        googleApiClient = new GoogleApiClient.Builder(this)
-                .addApi(LocationServices.API)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .build();
-
         LinearLayoutManager layoutManager
                 = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
-
 
         listData = getData();
 
         recyclerView = (RecyclerView) findViewById(R.id.rec_view_main);
-
         recyclerView.setLayoutManager(layoutManager);
-
         adapter = new WeatherCardAdapter(listData, this);
         recyclerView.setAdapter(adapter);
 
         btGo = (ImageButton) findViewById(R.id.imageButton_risk);
+        btGo.setOnClickListener(this);
 
         tvCurrentHumidity = (TextView) findViewById(R.id.textView_humidityValue);
         tvCurrentTemperature = (TextView) findViewById(R.id.textView_temperatureValue);
@@ -160,8 +146,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         tvMaxTemp = (TextView) findViewById(R.id.textView_temperatureMax);
         tvMaxRisk = (TextView) findViewById(R.id.tv_main_max_risk);
         vMax = findViewById(R.id.view_main_max);
-        FilterView = findViewById(R.id.activity_main);
-        btGo.setOnClickListener(this);
 
         btShowLocation = (ImageButton) findViewById(R.id.imageButton_showLocation);
         btShowLocation.setOnClickListener(this);
@@ -170,9 +154,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         isInternetAvailable();
 
+        //MARK: Checkbox
         cbCurrentLocation = (CheckBox) findViewById(R.id.checkBox2);
         cbCurrentLocation.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
+                @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 Checked = isChecked;
                 if(isChecked && isInternetAvailable()){
@@ -184,53 +169,50 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
 
-        //Blurry background
-        Bitmap icon = BitmapFactory.decodeResource(getResources(),
-                R.drawable.background);
-
+        //MARK: Blurry background
+        FilterView = findViewById(R.id.activity_main);
+        Bitmap icon = BitmapFactory.decodeResource(getResources(), R.drawable.background);
         Bitmap blurredBitmap = BlurBuilder.blur( MainActivity.this, icon);
-
         FilterView.setBackgroundDrawable( new BitmapDrawable( getResources(), blurredBitmap ) );
 
 
         //MARK: MAKING CALL
         sbCall = (SeekBar) findViewById(R.id.seek_Call911);
         sbCall.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                @Override
+                public void onStopTrackingTouch(SeekBar seekBar) {
+                    // TODO Auto-generated method stub
+                    if (sbprogress > 93) {
+                        //Making Call
+                        Intent i = new Intent(Intent.ACTION_CALL);
+                        i.setData(Uri.parse("tel:8180200922"));
+                        if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                            // TODO: Consider calling
+                            //    ActivityCompat#requestPermissions
+                            // here to request the missing permissions, and then overriding
+                            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                            //                                          int[] grantResults)
+                            // to handle the case where the user grants the permission. See the documentation
+                            // for ActivityCompat#requestPermissions for more details.
+                            return;
+                        }
+                        startActivity(i);
 
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                // TODO Auto-generated method stub
-                if (sbprogress > 93) {
-                    //Making Call
-                    Intent i = new Intent(Intent.ACTION_CALL);
-                    i.setData(Uri.parse("tel:8180200922"));
-                    if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-                        // TODO: Consider calling
-                        //    ActivityCompat#requestPermissions
-                        // here to request the missing permissions, and then overriding
-                        //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                        //                                          int[] grantResults)
-                        // to handle the case where the user grants the permission. See the documentation
-                        // for ActivityCompat#requestPermissions for more details.
-                        return;
+                    } else {
+                        sbCall.setProgress(0);
                     }
-                    startActivity(i);
-
-                } else {
-                    sbCall.setProgress(0);
                 }
-            }
 
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-                // TODO Auto-generated method stub
-            }
+                @Override
+                public void onStartTrackingTouch(SeekBar seekBar) {
+                    // TODO Auto-generated method stub
+                }
 
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                // TODO Auto-generated method stub
-                sbprogress = progress;
-            }
+                @Override
+                public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                    // TODO Auto-generated method stub
+                    sbprogress = progress;
+                }
         });
 
         if (!isInternetAvailable()){
@@ -238,7 +220,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             new AlertDialog.Builder(this).setTitle("Internet Connection").setMessage("Please check your internet connection").setNeutralButton("Close", null).show();
         }
 
-        //Auto Complete Text View
+        //AutoComplete Text View
         adapterAutoComplete = new ArrayAdapter<String>(this,
                 android.R.layout.simple_dropdown_item_1line, Cities);
         adapterAutoComplete.setNotifyOnChange(true);
@@ -276,6 +258,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         sbCall.setProgress(0);
     }
 
+    //MARK: LOCATION
+    @Override
+    public void onLocationChanged(android.location.Location location) {
+        lLat = location.getLatitude();
+        lLong = location.getLongitude();
+        Log.d("MainAct",String.valueOf(lLat)+String.valueOf(lLong));
+        //new RetrieveLocation().execute();
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -305,21 +296,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         }
         return false;
-    }
-
-    void HideLocation() {
-        etLocation.setVisibility(View.GONE);
-        cbCurrentLocation.setVisibility(View.GONE);
-        btShowLocation.setVisibility(View.VISIBLE);
-        tvLocation.setVisibility(View.VISIBLE);
-        tvLocation.setText(etLocation.getText());
-    }
-
-    void ShowLocation() {
-        etLocation.setVisibility(View.VISIBLE);
-        btShowLocation.setVisibility(View.GONE);
-        cbCurrentLocation.setVisibility(View.VISIBLE);
-        tvLocation.setVisibility(View.GONE);
     }
 
     //MARK: Text Watcher, detect if text changed.
@@ -352,6 +328,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         }
     };
+
+    void HideLocation() {
+        etLocation.setVisibility(View.GONE);
+        cbCurrentLocation.setVisibility(View.GONE);
+        btShowLocation.setVisibility(View.VISIBLE);
+        tvLocation.setVisibility(View.VISIBLE);
+        tvLocation.setText(etLocation.getText());
+    }
+
+    void ShowLocation() {
+        etLocation.setVisibility(View.VISIBLE);
+        btShowLocation.setVisibility(View.GONE);
+        cbCurrentLocation.setVisibility(View.VISIBLE);
+        tvLocation.setVisibility(View.GONE);
+    }
 
     //MARK: Get false Data while getting real data
     ArrayList<WeatherCard> getData(){
@@ -526,7 +517,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             // Do some validation here
             String state="";
             if (!Checked) {
-                state = Location.substring(Location.indexOf(","));
+                if (Location.contains(",")){
+                    state = Location.substring(Location.indexOf(","));
+                } else {
+                    state = " ";
+                }
 
                 Location = Location.replace(state, "");
                 state = state.replace(", ", "");
@@ -561,6 +556,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         }
                         bufferedReader.close();
                         return stringBuilder.toString();
+                    } catch (Exception e) {
+                        Log.e("ERROR", e.getMessage(), e);
+                        new AlertDialog.Builder(MainActivity.this).setTitle("Location Error").setMessage("No information for location").setNeutralButton("Close", null).show();
+
+                        return null;
                     } finally {
                         urlConnection.disconnect();
                     }
@@ -589,10 +589,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if (internet){
                     JSONObject object = (JSONObject) new JSONTokener(response).nextValue();
 
-                    if(!object.has("current_observation")){
+                    if(object.has("error")){
                         Toast.makeText(getApplicationContext(), "No information available \n for this location", Toast.LENGTH_SHORT).show();
                         return;
                     } else{
+                        Location = object.getJSONObject("current_observation").getJSONObject("display_location").getString("full");
+                        etLocation.setText(Location);
                         humidity = object.getJSONObject("current_observation").getString("relative_humidity");
                         temperature = object.getJSONObject("current_observation").getString("temp_f");
                         currentLocation = object.getJSONObject("current_observation").getString("full");
@@ -691,7 +693,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                     JSONArray results = object.getJSONArray("RESULTS");
 
-                    //Arrays.fill( Cities, results.length() );
                     Cities = new String[results.length()];
 
                     for (int i = 0; i < results.length(); i++) {
@@ -714,57 +715,5 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         }
     }
-
-
-    //MARK: LOCATION
-    @Override
-    public void onConnected(@Nullable Bundle bundle) {
-        locationRequest = LocationRequest.create();
-        locationRequest.setPriority(LocationRequest.PRIORITY_LOW_POWER);
-        locationRequest.setInterval(300000);
-
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
-        }
-        LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this);
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-
-    }
-
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
-    }
-
-    @Override
-    protected void onStart(){
-        super.onStart();
-        googleApiClient.connect();
-    }
-
-    @Override
-    protected void onStop(){
-        super.onStop();
-        googleApiClient.disconnect();
-    }
-
-    @Override
-    public void onLocationChanged(android.location.Location location) {
-        lLat = location.getLatitude();
-        lLong = location.getLongitude();
-        Log.d("MainAct",String.valueOf(lLat)+String.valueOf(lLong));
-        //new RetrieveLocation().execute();
-    }
-
 
 }
