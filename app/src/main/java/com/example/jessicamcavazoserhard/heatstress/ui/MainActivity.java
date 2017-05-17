@@ -174,8 +174,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         cbCurrentLocation.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                Checked = isChecked;
                 if(isChecked && isInternetAvailable()){
-                    isChecked = Checked;
                     //new RetrieveLocation().execute();
                     new RetrieveWeatherForLocation().execute();
                 } else if (!isInternetAvailable()) {
@@ -341,6 +341,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     new RetrieveAutoComplete().execute();
                 }
             }
+            cbCurrentLocation.setChecked(false);
         }
 
         @Override
@@ -522,7 +523,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         protected String doInBackground(Void... urls) {
 
+            Log.d("Conexion","String transformed: " + lLat + lLong);
+
             // Do some validation here
+            Location = " ,  ";
             String state = Location.substring(Location.indexOf(","));
             Location = Location.replace(state, "");
             state = state.replace(", ", "");
@@ -638,8 +642,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         protected String doInBackground(Void... urls) {
-            // Do some validation here
-            Location = Location.replaceAll("\\s+", "%20");
+            // Do some validation herLocation = Location.replaceAll("\\s+", "%20");
             Location = Location.replaceAll(" ", "%20");
             Log.d("Conexion","String transformed: " + Location);
 
