@@ -18,16 +18,20 @@
         style="@style/Widget.AppCompat.EditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+
+
+        android:layout_alignWithParentIfMissing="false"
+
         android:layout_weight="1"
         android:hint="Enter Address"
-
-
         android:maxLines="1"
-
-        android:singleLine="true"
+        android:singleLine="false"
         android:textAlignment="center"
         android:textColor="@color/common_google_signin_btn_text_dark_default"
         android:textColorHint="?attr/editTextColor"
+        android:textSize="24sp"
         android:textStyle="bold"
         android:visibility="visible"
         android:windowSoftInputMode="adjustPan" />
@@ -93,6 +97,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:singleLine="true"
                 android:text="--"
                 android:textColor="@android:color/white"
                 android:textSize="36sp" />
@@ -119,6 +124,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:singleLine="true"
                 android:text="--"
                 android:textColor="@android:color/white"
                 android:textSize="36sp" />
@@ -149,8 +155,9 @@
 
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@id/linearLayout"
-        android:layout_centerHorizontal="true">
+        android:layout_below="@+id/checkBox2"
+        android:layout_toEndOf="@+id/textView_location"
+        android:layout_marginTop="15dp">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -235,6 +242,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:singleLine="true"
                     android:text="--"
                     android:textColor="@android:color/white"
                     android:textSize="36sp" />
@@ -265,6 +273,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:singleLine="true"
                     android:text="--"
                     android:textColor="@android:color/white"
                     android:textSize="36sp" />

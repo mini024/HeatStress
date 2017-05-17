@@ -25,6 +25,8 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
+import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -53,17 +55,14 @@ import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.Toast;
 import android.widget.TextView;
-
 import com.example.jessicamcavazoserhard.heatstress.BlurBuilder;
 import com.example.jessicamcavazoserhard.heatstress.Helper;
 import com.example.jessicamcavazoserhard.heatstress.R;
+import com.example.jessicamcavazoserhard.heatstress.TrackGPS;
 import com.example.jessicamcavazoserhard.heatstress.adapter.WeatherCardAdapter;
 import com.example.jessicamcavazoserhard.heatstress.model.WeatherCard;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationServices;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -79,10 +78,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.PriorityQueue;
 
-import static android.R.attr.data;
-import static android.R.attr.radius;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener, View.OnKeyListener, LocationListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, View.OnKeyListener {
 
     //MARK - Elements of View
     ImageButton btGo;
@@ -104,9 +101,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private ArrayList<WeatherCard> listData;
     ArrayAdapter<String> adapterAutoComplete;
 
+
     //MARK - Variables
-    private LocationRequest locationRequest;
-    private GoogleApiClient googleApiClient;
+
+    private TrackGPS gps;
     String Location;
     boolean internet;
     boolean Checked;
@@ -165,6 +163,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
                 Checked = isChecked;
                 if(isChecked && isInternetAvailable()){
                     new RetrieveWeatherForLocation().execute();
@@ -175,6 +174,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             }
         });
+
+        //MARK:Location
+        gps = new TrackGPS(MainActivity.this);
+        lLong = gps.getLongitude();
+        lLat = gps .getLatitude();
+
+        Log.d("Location", Double.toString(lLat));
 
         //MARK: Blurry background
         FilterView = findViewById(R.id.activity_main);
@@ -266,54 +272,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         sbCall.setProgress(0);
     }
 
-    //MARK: LOCATION
-
-    @Override
-    public void onConnected(@Nullable Bundle bundle) {
-        locationRequest = LocationRequest.create();
-        locationRequest.setPriority(LocationRequest.PRIORITY_LOW_POWER);
-        locationRequest.setInterval(300000);
-
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
-        }
-        LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this);
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-
-    }
-
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
-    }
-
-    @Override
-    protected void onStart(){
-        super.onStart();
-    }
-
-    @Override
-    protected void onStop(){
-        super.onStop();
-    }
-
-    @Override
-    public void onLocationChanged(android.location.Location location) {
-        lLat = location.getLatitude();
-        lLong = location.getLongitude();
-        Log.d("MainAct",String.valueOf(lLat)+String.valueOf(lLong));
-        //new RetrieveLocation().execute();
-    }
 
     @Override
     protected void onResume() {
@@ -346,6 +304,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         return false;
     }
 
+    void HideLocation() {
+        etLocation.setVisibility(View.GONE);
+        cbCurrentLocation.setVisibility(View.GONE);
+        btShowLocation.setVisibility(View.VISIBLE);
+        tvLocation.setVisibility(View.VISIBLE);
+        tvLocation.setText(etLocation.getText());
+    }
+
+    void ShowLocation() {
+        etLocation.setVisibility(View.VISIBLE);
+        btShowLocation.setVisibility(View.GONE);
+        cbCurrentLocation.setVisibility(View.VISIBLE);
+        tvLocation.setVisibility(View.GONE);
+    }
+
     //MARK: Text Watcher, detect if text changed.
     private TextWatcher textWatcher = new TextWatcher() {
 
@@ -376,21 +349,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         }
     };
-
-    void HideLocation() {
-        etLocation.setVisibility(View.GONE);
-        cbCurrentLocation.setVisibility(View.GONE);
-        btShowLocation.setVisibility(View.VISIBLE);
-        tvLocation.setVisibility(View.VISIBLE);
-        tvLocation.setText(etLocation.getText());
-    }
-
-    void ShowLocation() {
-        etLocation.setVisibility(View.VISIBLE);
-        btShowLocation.setVisibility(View.GONE);
-        cbCurrentLocation.setVisibility(View.VISIBLE);
-        tvLocation.setVisibility(View.GONE);
-    }
 
     //MARK: Get false Data while getting real data
     ArrayList<WeatherCard> getData(){
@@ -645,8 +603,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         Toast.makeText(getApplicationContext(), "No information available \n for this location", Toast.LENGTH_SHORT).show();
                         return;
                     } else{
-                        Location = object.getJSONObject("current_observation").getJSONObject("display_location").getString("full");
-                        etLocation.setText(Location);
+                        if (Checked){
+                            Location = object.getJSONObject("current_observation").getJSONObject("display_location").getString("full");
+                            etLocation.setText(Location);
+                            tvLocation.setText(Location);
+                            //HideLocation();
+                        }
                         humidity = object.getJSONObject("current_observation").getString("relative_humidity");
                         temperature = object.getJSONObject("current_observation").getString("temp_f");
                         currentLocation = object.getJSONObject("current_observation").getJSONObject("display_location").getString("full");
@@ -688,7 +650,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         }
     }
-
 
     //MARK - API Implementation for AutoComplete
     class RetrieveAutoComplete extends AsyncTask<Void, Void, String> {
@@ -767,5 +728,4 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         }
     }
-
 }
