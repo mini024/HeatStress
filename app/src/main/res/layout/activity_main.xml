@@ -27,7 +27,7 @@
         android:layout_weight="1"
         android:hint="Enter Address"
         android:maxLines="1"
-        android:singleLine="false"
+        android:singleLine="true"
         android:textAlignment="center"
         android:textColor="@color/common_google_signin_btn_text_dark_default"
         android:textColorHint="?attr/editTextColor"

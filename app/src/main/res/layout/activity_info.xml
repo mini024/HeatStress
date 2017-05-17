@@ -27,48 +27,49 @@
         android:id="@+id/image_Do"
         android:layout_width="35dp"
         android:layout_height="35dp"
+        app:srcCompat="@drawable/smile_face"
         android:layout_alignParentTop="true"
-        android:layout_alignStart="@+id/text_Dont"
-        app:srcCompat="@drawable/smile_face" />
+        android:layout_toStartOf="@+id/text_Do"
+        android:layout_marginEnd="10dp" />
 
     <TextView
         android:id="@+id/text_Do"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/image_Do"
-        android:layout_centerHorizontal="true"
         android:text="Do"
         android:textColor="@android:color/holo_green_dark"
         android:textSize="30sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
 
     <TextView
         android:id="@+id/text_DoRecomendations"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/image_Do"
-        android:layout_marginTop="14dp"
-        android:text="@string/high_DO_REQ"
+        android:layout_marginTop="22dp"
+        android:text="@string/medium_DO_REQ"
         android:textAlignment="center"
         android:textColor="@android:color/white"
-        android:textSize="15sp"
+        android:textSize="14sp"
         android:textStyle="bold" />
 
     <ImageView
         android:id="@+id/image_Dont"
         android:layout_width="35dp"
         android:layout_height="35dp"
+        app:srcCompat="@drawable/sick_face"
         android:layout_alignBottom="@+id/text_Dont"
         android:layout_toEndOf="@+id/text_Do"
-        app:srcCompat="@drawable/sick_face" />
+        android:layout_marginStart="11dp" />
 
     <TextView
         android:id="@+id/text_Dont"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/text_DoRecomendations"
-        android:layout_marginEnd="16dp"
         android:layout_marginTop="17dp"
         android:layout_toStartOf="@+id/image_Dont"
         android:text="Don't"
@@ -78,14 +79,14 @@
 
     <TextView
         android:id="@+id/text_DontRecomendations"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/image_Dont"
-        android:text="@string/high_DONT_REQ"
+        android:text="@string/medium_DONT_REQ"
         android:textAlignment="center"
         android:textColor="@android:color/white"
-        android:textSize="15sp"
+        android:textSize="14sp"
         android:textStyle="bold" />
 
     <ImageView
@@ -116,7 +117,7 @@
         android:layout_centerHorizontal="true"
         android:text="@string/Emargency_Recomendations"
         android:textColor="@android:color/white"
-        android:textSize="15sp"
+        android:textSize="14sp"
         android:textStyle="bold" />
 
     <ImageButton

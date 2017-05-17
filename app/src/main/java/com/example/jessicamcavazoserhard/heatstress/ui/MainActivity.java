@@ -286,7 +286,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         InputMethodManager in = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                         in.hideSoftInputFromWindow(etLocation.getApplicationWindowToken(),InputMethodManager.HIDE_NOT_ALWAYS);
                         new RetrieveWeatherForLocation().execute();
-                        HideLocation();
+                        //HideLocation();
                     } else {
                         new AlertDialog.Builder(MainActivity.this).setTitle("Internet Connection").setMessage("Please check your internet connection").setNeutralButton("Close", null).show();
                     }
@@ -318,7 +318,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
-            if (start ==  4) {
+            if (start ==  3) {
                 if (!isInternetAvailable()){
                     internet = false;
                     new AlertDialog.Builder(MainActivity.this).setTitle("Internet Connection").setMessage("Please check your internet connection").setNeutralButton("Close", null).show();
@@ -648,7 +648,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         protected String doInBackground(Void... urls) {
-            // Do some validation herLocation = Location.replaceAll("\\s+", "%20");
+            // Do some validation her
+            Location = Location.replaceAll("\\s+", "%20");
             Location = Location.replaceAll(" ", "%20");
             Log.d("Conexion","String transformed: " + Location);
 
