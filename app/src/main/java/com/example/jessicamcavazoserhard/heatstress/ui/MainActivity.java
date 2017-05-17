@@ -519,7 +519,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             // Do some validation here
             String state="";
             if (!Checked) {
-                state = Location.substring(Location.indexOf(","));
+                if (Location.contains(",")){
+                    state = Location.substring(Location.indexOf(","));
+                } else {
+                    state = " ";
+                }
 
                 Location = Location.replace(state, "");
                 state = state.replace(", ", "");
@@ -554,6 +558,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         }
                         bufferedReader.close();
                         return stringBuilder.toString();
+                    } catch (Exception e) {
+                        Log.e("ERROR", e.getMessage(), e);
+                        new AlertDialog.Builder(MainActivity.this).setTitle("Location Error").setMessage("No information for location").setNeutralButton("Close", null).show();
+
+                        return null;
                     } finally {
                         urlConnection.disconnect();
                     }
@@ -581,11 +590,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if (internet){
                     JSONObject object = (JSONObject) new JSONTokener(response).nextValue();
 
-                    if(!object.has("current_observation")){
+                    if(object.has("error")){
                         Toast.makeText(getApplicationContext(), "No information available \n for this location", Toast.LENGTH_SHORT).show();
                         return;
                     } else{
-                        Location = object.getJSONObject("current_observation").getJSONObject("display_location").getString("fully");
+                        Location = object.getJSONObject("current_observation").getJSONObject("display_location").getString("full");
                         etLocation.setText(Location);
                         humidity = object.getJSONObject("current_observation").getString("relative_humidity");
                         temperature = object.getJSONObject("current_observation").getString("temp_f");
