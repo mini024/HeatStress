@@ -98,6 +98,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private ArrayList<WeatherCard> listData;
     ArrayAdapter<String> adapterAutoComplete;
 
+
     //MARK - Variables
     private TrackGPS gps;
     String Location;
@@ -155,8 +156,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //MARK: Checkbox
         cbCurrentLocation = (CheckBox) findViewById(R.id.checkBox2);
         cbCurrentLocation.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
+            @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
                 Checked = isChecked;
                 if(isChecked && isInternetAvailable()){
                     //new RetrieveLocation().execute();
@@ -165,6 +167,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     internet = false;
                     new AlertDialog.Builder(MainActivity.this).setTitle("Internet Connection").setMessage("Please check your internet connection").setNeutralButton("Close", null).show();
                 }
+
             }
         });
 
@@ -264,15 +267,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         sbCall.setProgress(0);
     }
 
-//    //MARK: LOCATION
-//    @Override
-//    public void onLocationChanged(android.location.Location location) {
-//        lLat = location.getLatitude();
-//        lLong = location.getLongitude();
-//        Log.d("MainAct",String.valueOf(lLat)+String.valueOf(lLong));
-//        //new RetrieveLocation().execute();
-//    }
-
     @Override
     protected void onResume() {
         super.onResume();
@@ -302,6 +296,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         }
         return false;
+    }
+
+    void HideLocation() {
+        etLocation.setVisibility(View.GONE);
+        cbCurrentLocation.setVisibility(View.GONE);
+        btShowLocation.setVisibility(View.VISIBLE);
+        tvLocation.setVisibility(View.VISIBLE);
+        tvLocation.setText(etLocation.getText());
+    }
+
+    void ShowLocation() {
+        etLocation.setVisibility(View.VISIBLE);
+        btShowLocation.setVisibility(View.GONE);
+        cbCurrentLocation.setVisibility(View.VISIBLE);
+        tvLocation.setVisibility(View.GONE);
     }
 
     //MARK: Text Watcher, detect if text changed.
@@ -334,21 +343,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         }
     };
-
-    void HideLocation() {
-        etLocation.setVisibility(View.GONE);
-        cbCurrentLocation.setVisibility(View.GONE);
-        btShowLocation.setVisibility(View.VISIBLE);
-        tvLocation.setVisibility(View.VISIBLE);
-        tvLocation.setText(etLocation.getText());
-    }
-
-    void ShowLocation() {
-        etLocation.setVisibility(View.VISIBLE);
-        btShowLocation.setVisibility(View.GONE);
-        cbCurrentLocation.setVisibility(View.VISIBLE);
-        tvLocation.setVisibility(View.GONE);
-    }
 
     //MARK: Get false Data while getting real data
     ArrayList<WeatherCard> getData(){
@@ -721,5 +715,4 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         }
     }
-
 }
