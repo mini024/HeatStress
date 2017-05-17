@@ -174,8 +174,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         cbCurrentLocation.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+                Checked = isChecked;
                 if(isChecked && isInternetAvailable()){
-                    isChecked = Checked;
                     //new RetrieveLocation().execute();
                     new RetrieveWeatherForLocation().execute();
                 } else if (!isInternetAvailable()) {
@@ -341,6 +342,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     new RetrieveAutoComplete().execute();
                 }
             }
+            cbCurrentLocation.setChecked(false);
         }
 
         @Override
@@ -523,15 +525,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         protected String doInBackground(Void... urls) {
 
             // Do some validation here
-            String state = Location.substring(Location.indexOf(","));
-            Location = Location.replace(state, "");
-            state = state.replace(", ", "");
-            state = state.replaceAll(" ", "_");
-            state = state.replaceAll("\\s+", "_");
-            Location = Location.replaceAll("\\s+", "_");
-            Location = Location.replaceAll(" ", "_");
 
-            Log.d("Conexion","String transformed: " + Location);
+            String state="";
+            if (!Checked) {
+                state = Location.substring(Location.indexOf(","));
+
+                Location = Location.replace(state, "");
+                state = state.replace(", ", "");
+                state = state.replaceAll(" ", "_");
+                state = state.replaceAll("\\s+", "_");
+                Location = Location.replaceAll("\\s+", "_");
+                Location = Location.replaceAll(" ", "_");
+
+                Log.d("Conexion", "String transformed: " + Location);
+            }
+
+
+
 
             try {
                 if (internet) {
@@ -759,85 +769,5 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //new RetrieveLocation().execute();
     }
 
-    class RetrieveLocation extends AsyncTask<Void, Void, String> {
-
-        private Exception exception;
-
-        protected void onPreExecute() {
-        }
-
-        protected String doInBackground(Void... urls) {
-            try {
-                if (internet){
-                    URL url = new URL("https://maps.googleapis.com/maps/api/geocode/json?latlng="+lLat+","+lLong+"&key=AIzaSyClNTvnFptk7EH8p1RynvJ1km0a6MyFLdA");
-                    HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-                    Log.d("Connecion","Location from: " + url);
-                    try {
-                        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
-                        StringBuilder stringBuilder = new StringBuilder();
-                        String line;
-                        while ((line = bufferedReader.readLine()) != null) {
-                            stringBuilder.append(line).append("\n");
-                        }
-                        bufferedReader.close();
-                        return stringBuilder.toString();
-                    }
-                    finally{
-                        urlConnection.disconnect();
-                    }
-                } else {
-                    return null;
-                }
-            }
-            catch(Exception e) {
-                Log.e("ERROR", e.getMessage(), e);
-                return null;
-            }
-        }
-
-        protected void onPostExecute(String response) {
-            if(response == null) {
-                response = "THERE WAS AN ERROR";
-            }
-            Log.i("INFO", response);
-
-            try {
-                if (internet){
-                    JSONObject object = (JSONObject) new JSONTokener(response).nextValue();
-                    JSONArray results = object.getJSONArray("results");
-                    JSONObject object1 = results.getJSONObject(0);
-                    JSONArray address_components = object1.getJSONArray("address_components");
-                    JSONObject object2;
-
-                    boolean bstate=false,bcity=false, bcountry = false;
-                    for(int i=0; i<address_components.length(); i++){
-                        object2 = address_components.getJSONObject(i);
-                        String type = object2.getString("types");
-                        if(type.contains("administrative_area_level_1")){
-                            sState=object2.getString("short_name");
-                            Log.d("STATE",sState);
-                            bstate=true;
-                        }
-                        if(type.contains("administrative_area_level_2")){
-                            sCity=object2.getString("long_name");
-                            Log.d("CITY",sCity);
-                            bcity=true;
-                        }
-                        if(type.contains("country")){
-                            country=object2.getString("long_name");
-                            Log.d("COUNTRY",country);
-                            bcountry = true;
-                        }
-                    }
-                    if(bcity && bstate && bcountry){
-                        etLocation.setText(sCity+", "+country);
-                    }
-                }
-            } catch (JSONException e){
-                Log.e("ERROR", e.getMessage(), e);
-            }
-
-        }
-    }
 
 }
