@@ -47,6 +47,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.CheckBox;
@@ -79,7 +80,7 @@ import java.util.Map;
 import java.util.PriorityQueue;
 
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener, View.OnKeyListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, View.OnKeyListener, AdapterView.OnItemClickListener {
 
     //MARK - Elements of View
     ImageButton btGo;
@@ -109,6 +110,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     boolean internet;
     boolean Checked;
     int sbprogress;
+    int taps = -1;
     int RiskType;
     private double lLat, lLong;
     String[] Cities = new String[]{
@@ -163,15 +165,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-
+                taps = 0;
                 Checked = isChecked;
                 if(isChecked && isInternetAvailable()){
+                    InputMethodManager in = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    in.hideSoftInputFromWindow(etLocation.getApplicationWindowToken(),InputMethodManager.HIDE_NOT_ALWAYS);
                     new RetrieveWeatherForLocation().execute();
                 } else if (!isInternetAvailable()) {
                     internet = false;
                     new AlertDialog.Builder(MainActivity.this).setTitle("Internet Connection").setMessage("Please check your internet connection").setNeutralButton("Close", null).show();
                 }
-
             }
         });
 
@@ -180,14 +183,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         lLong = gps.getLongitude();
         lLat = gps .getLatitude();
 
-        Log.d("Location", Double.toString(lLat));
-
         //MARK: Blurry background
         FilterView = findViewById(R.id.activity_main);
         Bitmap icon = BitmapFactory.decodeResource(getResources(), R.drawable.background);
         Bitmap blurredBitmap = BlurBuilder.blur( MainActivity.this, icon);
         FilterView.setBackgroundDrawable( new BitmapDrawable( getResources(), blurredBitmap ) );
-
 
         //MARK: MAKING CALL
         sbCall = (SeekBar) findViewById(R.id.seek_Call911);
@@ -240,9 +240,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         etLocation = (AutoCompleteTextView) findViewById(R.id.editText_address);
         etLocation.setAdapter(adapterAutoComplete);
         etLocation.setOnKeyListener(this);
-        etLocation.setThreshold(3);
+        etLocation.setThreshold(4);
         etLocation.addTextChangedListener(textWatcher);
-
+        etLocation.setOnItemClickListener(this);
+        etLocation.setOnClickListener(this);
     }
 
     //MARK: OnClick on button image and showLocation
@@ -256,14 +257,39 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.imageButton_showLocation:
                 if (isInternetAvailable()){
-                    ShowLocation();
+                    //ShowLocation();
                 } else {
                     internet = false;
                     new AlertDialog.Builder(MainActivity.this).setTitle("Internet Connection").setMessage("Please check your internet connection").setNeutralButton("Close", null).show();
                 }
                 break;
+            case R.id.editText_address:
+                taps = taps + 1;
+                if (taps > 1){
+                    etLocation.setText("");
+                    taps = 0;
+                } else {
+                    etLocation.setCursorVisible(true);
+                    Toast.makeText(getApplicationContext(), "Tap again on address to clear ", Toast.LENGTH_SHORT).show();
+                }
+                break;
         }
 
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        etLocation.dismissDropDown();
+        FilterView.findFocus();
+        if (isInternetAvailable()){
+            //MARK: Get Weather
+            InputMethodManager in = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            in.hideSoftInputFromWindow(etLocation.getApplicationWindowToken(),InputMethodManager.HIDE_NOT_ALWAYS);
+            new RetrieveWeatherForLocation().execute();
+            //HideLocation();
+        } else {
+            new AlertDialog.Builder(MainActivity.this).setTitle("Internet Connection").setMessage("Please check your internet connection").setNeutralButton("Close", null).show();
+        }
     }
 
     @Override
@@ -287,6 +313,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             switch (keyCode) {
                 case KeyEvent.KEYCODE_DPAD_CENTER:
                 case KeyEvent.KEYCODE_ENTER:
+                    taps = 0;
+                    etLocation.dismissDropDown();
                     if (isInternetAvailable()){
                         //MARK: Get Weather
                         InputMethodManager in = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -324,7 +352,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
-            if (start ==  3) {
+            if (count ==  4 || start == 4) {
                 if (!isInternetAvailable()){
                     internet = false;
                     new AlertDialog.Builder(MainActivity.this).setTitle("Internet Connection").setMessage("Please check your internet connection").setNeutralButton("Close", null).show();
@@ -341,12 +369,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
         }
 
         @Override
         public void afterTextChanged(Editable s) {
-
+            etLocation.setCursorVisible(false);
         }
     };
 
@@ -355,13 +382,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         ArrayList<WeatherCard> dummyData = new ArrayList<>();
         WeatherCard dummy = new WeatherCard("11:00 AM"," ",0,0,"green");
         dummyData.add(dummy);
-        dummy = new WeatherCard("12:00 PM"," ",0,0,"green");
+        dummy = new WeatherCard("12:00 PM","Snowy",0,0,"green");
         dummyData.add(dummy);
-        dummy = new WeatherCard("1:00 PM"," ",0,0, "green");
+        dummy = new WeatherCard("1:00 PM"," ",0,0, "yellow");
         dummyData.add(dummy);
-        dummy = new WeatherCard("2:00 PM"," ",0,0, "green");
+        dummy = new WeatherCard("2:00 PM"," ",0,0, "orange");
         dummyData.add(dummy);
-        dummy = new WeatherCard("3:00 PM"," ",0,0, "green");
+        dummy = new WeatherCard("3:00 PM"," ",0,0, "red");
         dummyData.add(dummy);
         dummy = new WeatherCard("4:00 PM"," ",0,0, "green");
         dummyData.add(dummy);
@@ -581,7 +608,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
             catch(Exception e) {
                 Log.e("ERROR", e.getMessage(), e);
-                new AlertDialog.Builder(MainActivity.this).setTitle("Location Error").setMessage(e.getMessage()).setNeutralButton("Close", null).show();
+                new AlertDialog.Builder(MainActivity.this).setTitle("Location Error").setMessage("No information for location").setNeutralButton("Close", null).show();
                 return null;
             }
         }
@@ -600,23 +627,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     JSONObject object = (JSONObject) new JSONTokener(response).nextValue();
 
                     if(object.has("error")){
-                        Toast.makeText(getApplicationContext(), "No information available \n for this location", Toast.LENGTH_SHORT).show();
+                        new AlertDialog.Builder(MainActivity.this).setTitle("Location Error").setMessage("No information for location").setNeutralButton("Close", null).show();
                         return;
                     } else{
                         if (Checked){
                             Location = object.getJSONObject("current_observation").getJSONObject("display_location").getString("full");
                             etLocation.setText(Location);
+                            etLocation.dismissDropDown();
                             tvLocation.setText(Location);
                             //HideLocation();
                         }
                         humidity = object.getJSONObject("current_observation").getString("relative_humidity");
                         temperature = object.getJSONObject("current_observation").getString("temp_f");
-                        currentLocation = object.getJSONObject("current_observation").getJSONObject("display_location").getString("full");
+                        if (temperature.contains(".")){
+                            temperature = temperature.substring(0,temperature.indexOf("."));
+                        }
                     }
 
                     tvCurrentTemperature.setText(temperature + " ºF");
                     tvCurrentHumidity.setText(humidity);
-                    etLocation.setText(currentLocation);
 
                     double itemperature = Double.parseDouble(temperature);
                     double heatIndex = instance.getRisk(Double.parseDouble(temperature), humidity);
@@ -645,7 +674,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             } catch (JSONException e){
                 Log.e("ERROR", e.getMessage(), e);
-                new AlertDialog.Builder(MainActivity.this).setTitle("Location Error").setMessage(e.getMessage()).setNeutralButton("Close", null).show();
+                new AlertDialog.Builder(MainActivity.this).setTitle("Location Error").setMessage("No information for location").setNeutralButton("Close", null).show();
             }
 
         }
@@ -690,7 +719,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
             catch(Exception e) {
                 Log.e("ERROR", e.getMessage(), e);
-                new AlertDialog.Builder(MainActivity.this).setTitle("Autocomplete Error").setMessage(e.getMessage()).setNeutralButton("Close", null).show();
+                //new AlertDialog.Builder(MainActivity.this).setTitle("Autocomplete Error").setMessage(e.getMessage()).setNeutralButton("Close", null).show();
                 return null;
             }
         }

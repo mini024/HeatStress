@@ -20,10 +20,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-
-
         android:layout_alignWithParentIfMissing="false"
-
         android:layout_weight="1"
         android:hint="Enter Address"
         android:maxLines="1"
@@ -71,12 +68,12 @@
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/seek_Call911"
-        android:layout_alignParentStart="true"
         android:layout_weight="1"
         android:orientation="horizontal"
         android:weightSum="2"
-        android:windowSoftInputMode="adjustPan">
+        android:windowSoftInputMode="adjustPan"
+        android:layout_above="@+id/seek_Call911"
+        android:layout_toEndOf="@+id/textView_location">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -113,9 +110,9 @@
             android:weightSum="5">
 
             <ImageView
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_weight="2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.93"
                 android:contentDescription="humidity"
                 android:src="@drawable/temperature" />
 
@@ -123,7 +120,7 @@
                 android:id="@+id/textView_temperatureValue"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:layout_weight="2.17"
                 android:singleLine="true"
                 android:text="--"
                 android:textColor="@android:color/white"

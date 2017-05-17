@@ -69,13 +69,12 @@
         android:id="@+id/text_Dont"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/text_DoRecomendations"
-        android:layout_marginTop="17dp"
-        android:layout_toStartOf="@+id/image_Dont"
         android:text="Don't"
         android:textColor="@android:color/holo_orange_light"
         android:textSize="30sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:layout_below="@+id/text_DoRecomendations"
+        android:layout_toStartOf="@+id/image_Dont" />
 
     <TextView
         android:id="@+id/text_DontRecomendations"
@@ -101,24 +100,23 @@
         android:id="@+id/text_Emergencies"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/text_EMsymptoms"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="13dp"
         android:text="Emergencies"
         android:textColor="@android:color/holo_red_dark"
         android:textSize="30sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:layout_below="@+id/text_DontRecomendations"
+        android:layout_centerHorizontal="true" />
 
     <TextView
         android:id="@+id/text_EMsymptoms"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/seek_Call911"
-        android:layout_centerHorizontal="true"
         android:text="@string/Emargency_Recomendations"
         android:textColor="@android:color/white"
         android:textSize="14sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:layout_below="@+id/image_Telephone"
+        android:layout_centerHorizontal="true" />
 
     <ImageButton
         android:id="@+id/image_MoreInfo"
