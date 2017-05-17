@@ -111,6 +111,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     String Location;
     String country = "";
     boolean internet;
+    boolean Checked;
     int sbprogress;
     int RiskType;
     String[] Cities = new String[]{
@@ -174,8 +175,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked && isInternetAvailable()){
-                    new RetrieveLocation().execute();
-                } else {
+                    isChecked = Checked;
+                    //new RetrieveLocation().execute();
+                    new RetrieveWeatherForLocation().execute();
+                } else if (!isInternetAvailable()) {
                     internet = false;
                     new AlertDialog.Builder(MainActivity.this).setTitle("Internet Connection").setMessage("Please check your internet connection").setNeutralButton("Close", null).show();
                 }
@@ -533,11 +536,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             try {
                 if (internet) {
                     URL url;
-                    if (instance.states.get(state) != null) {
+                    if (Checked){
+                        url = new URL("http://api.wunderground.com/api/25d0f02c485109f2/conditions/hourly/q/"+ lLat +","+ lLong +".json");
+                    } else if (instance.states.get(state) != null) {
                         url = new URL("http://api.wunderground.com/api/25d0f02c485109f2/conditions/hourly/q/" + instance.states.get(state) + "/" + Location + ".json");
                     } else if (Location.equals("Monterrey")){
                         url = new URL("http://api.wunderground.com/api/25d0f02c485109f2/conditions/hourly/q/25.87,-100.20.json");
-                    }else {
+                    } else {
                         url = new URL("http://api.wunderground.com/api/25d0f02c485109f2/conditions/hourly/q/" + state + "/" + Location + ".json");
                     }
                     HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
