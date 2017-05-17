@@ -176,8 +176,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 Checked = isChecked;
                 if(isChecked && isInternetAvailable()){
-                    //new RetrieveLocation().execute();
-                    new RetrieveWeatherForLocation().execute();
                 } else if (!isInternetAvailable()) {
                     internet = false;
                     new AlertDialog.Builder(MainActivity.this).setTitle("Internet Connection").setMessage("Please check your internet connection").setNeutralButton("Close", null).show();
@@ -587,6 +585,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             try {
                 String humidity;
                 String temperature;
+                String currentLocation;
                 if (internet){
                     JSONObject object = (JSONObject) new JSONTokener(response).nextValue();
 
@@ -596,10 +595,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     } else{
                         humidity = object.getJSONObject("current_observation").getString("relative_humidity");
                         temperature = object.getJSONObject("current_observation").getString("temp_f");
+                        currentLocation = object.getJSONObject("current_observation").getString("full");
                     }
 
                     tvCurrentTemperature.setText(temperature + " ºF");
                     tvCurrentHumidity.setText(humidity);
+                    etLocation.setText(currentLocation);
 
                     double itemperature = Double.parseDouble(temperature);
                     double heatIndex = instance.getRisk(Double.parseDouble(temperature), humidity);
