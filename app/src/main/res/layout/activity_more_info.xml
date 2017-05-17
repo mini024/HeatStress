@@ -21,10 +21,11 @@
             android:id="@+id/textView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Subjects"
+            android:text="First Aid"
             android:textAlignment="center"
             android:textColor="@android:color/white"
-            android:textSize="23sp" />
+            android:textSize="23sp"
+            android:textStyle="bold" />
 
         <ListView
             android:id="@android:id/list"

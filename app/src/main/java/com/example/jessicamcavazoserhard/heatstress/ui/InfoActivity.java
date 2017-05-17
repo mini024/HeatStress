@@ -20,6 +20,9 @@ package com.example.jessicamcavazoserhard.heatstress.ui;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -28,6 +31,7 @@ import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import com.example.jessicamcavazoserhard.heatstress.BlurBuilder;
 import com.example.jessicamcavazoserhard.heatstress.R;
 
 public class InfoActivity extends AppCompatActivity implements View.OnClickListener{
@@ -37,6 +41,8 @@ public class InfoActivity extends AppCompatActivity implements View.OnClickListe
     TextView tvDo, tvDONT;
     int sbprogress = 0;
     int RiskType;
+    View FilterView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,8 +56,18 @@ public class InfoActivity extends AppCompatActivity implements View.OnClickListe
         tvDONT = (TextView)findViewById(R.id.text_DontRecomendations);
         ibMoreInfo = (ImageButton) findViewById(R.id.image_MoreInfo);
         ibMoreInfo.setOnClickListener(this);
+        FilterView = findViewById(R.id.activity_info);
+
 
         SetRecomendations();
+
+        //Blurry background
+        Bitmap icon = BitmapFactory.decodeResource(getResources(),
+                R.drawable.background);
+
+        Bitmap blurredBitmap = BlurBuilder.blur(InfoActivity.this, icon);
+
+        FilterView.setBackgroundDrawable( new BitmapDrawable( getResources(), blurredBitmap ) );
 
         sbCall = (SeekBar) findViewById(R.id.seek_Call911);
         sbCall.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {

@@ -19,10 +19,15 @@
 
 package com.example.jessicamcavazoserhard.heatstress.ui;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.TextView;
 
+import com.example.jessicamcavazoserhard.heatstress.BlurBuilder;
 import com.example.jessicamcavazoserhard.heatstress.R;
 import com.example.jessicamcavazoserhard.heatstress.model.GifImageView;
 import com.example.jessicamcavazoserhard.heatstress.model.Subject;
@@ -51,6 +56,16 @@ public class DetailActivity extends AppCompatActivity {
             tvtitle.setText(s.getTitle());
             tvdescription.setText(s.getsDescription());
         }
+
+        View FilterView = findViewById(R.id.activity_detail);
+
+        //Blurry background
+        Bitmap icon = BitmapFactory.decodeResource(getResources(),
+                R.drawable.background);
+
+        Bitmap blurredBitmap = BlurBuilder.blur( DetailActivity.this, icon);
+
+        FilterView.setBackgroundDrawable( new BitmapDrawable( getResources(), blurredBitmap ) );
     }
 
 }

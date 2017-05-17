@@ -22,6 +22,9 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -49,7 +52,9 @@ import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.Toast;
 import android.widget.TextView;
-import com.example.jessicamcavazoserhard.heatstress.GlobalData;
+
+import com.example.jessicamcavazoserhard.heatstress.BlurBuilder;
+import com.example.jessicamcavazoserhard.heatstress.Helper;
 import com.example.jessicamcavazoserhard.heatstress.R;
 import com.example.jessicamcavazoserhard.heatstress.adapter.WeatherCardAdapter;
 import com.example.jessicamcavazoserhard.heatstress.model.WeatherCard;
@@ -71,104 +76,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.PriorityQueue;
 
+import static android.R.attr.data;
+import static android.R.attr.radius;
+
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, View.OnKeyListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener {
 
-    //Location variables
-    private GoogleApiClient googleApiClient;
-    private LocationRequest locationRequest;
-    private double lLat, lLong;
-    private String sCity, sState;
-    //
-
-    String[] Cities = new String[]{
-            "Monterrey, Nuevo Leon", "San Francisco , California", "Los Angeles , California", "Germany", "Spain"
-    };
-
-    //MARK - States
-    public static final Map<String, String> states;
-    static {
-        states = new HashMap<String, String>();
-        states.put("Alabama","AL");
-        states.put("Alaska","AK");
-        states.put("Alberta","AB");
-        states.put("American Samoa","AS");
-        states.put("Arizona","AZ");
-        states.put("Arkansas","AR");
-        states.put("Armed Forces (AE)","AE");
-        states.put("Armed Forces Americas","AA");
-        states.put("Armed Forces Pacific","AP");
-        states.put("British Columbia","BC");
-        states.put("California","CA");
-        states.put("Colorado","CO");
-        states.put("Connecticut","CT");
-        states.put("Delaware","DE");
-        states.put("District Of Columbia","DC");
-        states.put("Florida","FL");
-        states.put("Georgia","GA");
-        states.put("Guam","GU");
-        states.put("Hawaii","HI");
-        states.put("Idaho","ID");
-        states.put("Illinois","IL");
-        states.put("Indiana","IN");
-        states.put("Iowa","IA");
-        states.put("Kansas","KS");
-        states.put("Kentucky","KY");
-        states.put("Louisiana","LA");
-        states.put("Maine","ME");
-        states.put("Manitoba","MB");
-        states.put("Maryland","MD");
-        states.put("Massachusetts","MA");
-        states.put("Michigan","MI");
-        states.put("Minnesota","MN");
-        states.put("Mississippi","MS");
-        states.put("Missouri","MO");
-        states.put("Montana","MT");
-        states.put("Nebraska","NE");
-        states.put("Nevada","NV");
-        states.put("New Brunswick","NB");
-        states.put("New Hampshire","NH");
-        states.put("New Jersey","NJ");
-        states.put("New Mexico","NM");
-        states.put("New York","NY");
-        states.put("Newfoundland","NF");
-        states.put("North Carolina","NC");
-        states.put("North Dakota","ND");
-        states.put("Northwest Territories","NT");
-        states.put("Nova Scotia","NS");
-        states.put("Nunavut","NU");
-        states.put("Ohio","OH");
-        states.put("Oklahoma","OK");
-        states.put("Ontario","ON");
-        states.put("Oregon","OR");
-        states.put("Pennsylvania","PA");
-        states.put("Prince Edward Island","PE");
-        states.put("Puerto Rico","PR");
-        states.put("Quebec","QC");
-        states.put("Rhode Island","RI");
-        states.put("Saskatchewan","SK");
-        states.put("South Carolina","SC");
-        states.put("South Dakota","SD");
-        states.put("Tennessee","TN");
-        states.put("Texas","TX");
-        states.put("Utah","UT");
-        states.put("Vermont","VT");
-        states.put("Virgin Islands","VI");
-        states.put("Virginia","VA");
-        states.put("Washington","WA");
-        states.put("West Virginia","WV");
-        states.put("Wisconsin","WI");
-        states.put("Wyoming","WY");
-        states.put("Yukon Territory","YT");
-    }
-
-    private RecyclerView recyclerView;
-    private WeatherCardAdapter adapter;
-    private ArrayList<WeatherCard> listData;
-    ArrayAdapter<String> adapterAutoComplete;
-
-    //Instance of global
-    GlobalData global;
-
+    //MARK - Elements of View
     ImageButton btGo;
     AutoCompleteTextView etLocation;
     TextView tvCurrentRisk;
@@ -178,22 +91,34 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     TextView tvMaxTemp;
     TextView tvMaxRisk;
     View vMax;
-    JSONArray dataTime;
-    String Location;
-    String humidity;
-    String temperature;
-    JSONObject x;
     SeekBar sbCall;
-    ImageButton btShowLocation;
     TextView tvLocation;
     CheckBox cbCurrentLocation;
+    View FilterView;
+    ImageButton btShowLocation;
+    private RecyclerView recyclerView;
+    private WeatherCardAdapter adapter;
+    private ArrayList<WeatherCard> listData;
+    ArrayAdapter<String> adapterAutoComplete;
+
+    //Location variables
+    private GoogleApiClient googleApiClient;
+    private LocationRequest locationRequest;
+    private double lLat, lLong;
+    private String sCity, sState;
+
+    //MARK - Variables
+    String Location;
     String country = "";
     boolean internet;
     int sbprogress;
     int RiskType;
-    View FilterView;
+    String[] Cities = new String[]{
+            "Monterrey, Mexico"
+    };
 
-    final double c1=16.923,c2=0.185212,c3=5.37941,c4=-0.100254,c5=0.00941695,c6=0.00728898,c7=0.000345372,c8=-0.000814971,c9=0.0000102102,c10=-0.000038646,c11=0.0000291583,c12=0.00000142721,c13=0.000000197483,c14=-0.0000000218429,c15=0.000000000843296,c16=-0.0000000000481975;
+    //MARK: Implementing helper
+    Helper instance = Helper.getInstance();
 
     //Max temps and humidity
     PriorityQueue<Integer> pqRisk;
@@ -234,7 +159,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         tvMaxTemp = (TextView) findViewById(R.id.textView_temperatureMax);
         tvMaxRisk = (TextView) findViewById(R.id.tv_main_max_risk);
         vMax = findViewById(R.id.view_main_max);
-        FilterView = findViewById(R.id.filterView);
+        FilterView = findViewById(R.id.activity_main);
         btGo.setOnClickListener(this);
 
         btShowLocation = (ImageButton) findViewById(R.id.imageButton_showLocation);
@@ -257,6 +182,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             }
         });
+
+        //Blurry background
+        Bitmap icon = BitmapFactory.decodeResource(getResources(),
+                R.drawable.background);
+
+        Bitmap blurredBitmap = BlurBuilder.blur( MainActivity.this, icon);
+
+        FilterView.setBackgroundDrawable( new BitmapDrawable( getResources(), blurredBitmap ) );
+
 
         //MARK: MAKING CALL
         sbCall = (SeekBar) findViewById(R.id.seek_Call911);
@@ -314,36 +248,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         etLocation.addTextChangedListener(textWatcher);
     }
 
-    //MARK: Text Watcher, detect if text changed.
-    private TextWatcher textWatcher = new TextWatcher() {
-
-        @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count) {
-            if (start ==  4) {
-                if (!isInternetAvailable()){
-                    internet = false;
-                    new AlertDialog.Builder(MainActivity.this).setTitle("Internet Connection").setMessage("Please check your internet connection").setNeutralButton("Close", null).show();
-                } else {
-                    internet = true;
-                    //MARK: Get Weather
-                    InputMethodManager in = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                    in.hideSoftInputFromWindow(etLocation.getApplicationWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-                    new RetrieveAutoComplete().execute();
-                }
-            }
-        }
-
-        @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-        }
-
-        @Override
-        public void afterTextChanged(Editable s) {
-
-        }
-    };
-
     //MARK: OnClick on button image and showLocation
     @Override
     public void onClick(View v) {
@@ -378,21 +282,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //Restore state here
     }
 
-    void HideLocation() {
-        etLocation.setVisibility(View.GONE);
-        cbCurrentLocation.setVisibility(View.GONE);
-        btShowLocation.setVisibility(View.VISIBLE);
-        tvLocation.setVisibility(View.VISIBLE);
-        tvLocation.setText(etLocation.getText());
-    }
-
-    void ShowLocation() {
-        etLocation.setVisibility(View.VISIBLE);
-        btShowLocation.setVisibility(View.GONE);
-        cbCurrentLocation.setVisibility(View.VISIBLE);
-        tvLocation.setVisibility(View.GONE);
-    }
-
     //MARK: Detect enter to hide keyboard and get data.
     @Override
     public boolean onKey(View v, int keyCode, KeyEvent event) {
@@ -416,6 +305,51 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         return false;
     }
+
+    void HideLocation() {
+        etLocation.setVisibility(View.GONE);
+        cbCurrentLocation.setVisibility(View.GONE);
+        btShowLocation.setVisibility(View.VISIBLE);
+        tvLocation.setVisibility(View.VISIBLE);
+        tvLocation.setText(etLocation.getText());
+    }
+
+    void ShowLocation() {
+        etLocation.setVisibility(View.VISIBLE);
+        btShowLocation.setVisibility(View.GONE);
+        cbCurrentLocation.setVisibility(View.VISIBLE);
+        tvLocation.setVisibility(View.GONE);
+    }
+
+    //MARK: Text Watcher, detect if text changed.
+    private TextWatcher textWatcher = new TextWatcher() {
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            if (start ==  4) {
+                if (!isInternetAvailable()){
+                    internet = false;
+                    new AlertDialog.Builder(MainActivity.this).setTitle("Internet Connection").setMessage("Please check your internet connection").setNeutralButton("Close", null).show();
+                } else {
+                    internet = true;
+                    //MARK: Get Weather
+                    InputMethodManager in = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    in.hideSoftInputFromWindow(etLocation.getApplicationWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                    new RetrieveAutoComplete().execute();
+                }
+            }
+        }
+
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+
+        }
+    };
 
     //MARK: Get false Data while getting real data
     ArrayList<WeatherCard> getData(){
@@ -462,15 +396,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    double getRisk (double temperature, String humidity){
-
-        humidity = humidity.replaceAll("%", "");
-        int Rhumidity = Integer.parseInt(humidity);
-
-        double heatIndex = c1 + c2*temperature +c3*Rhumidity + c4*temperature*Rhumidity + c5*(Math.pow(temperature,2)) + c6*(Math.pow(Rhumidity,2)) + c7*(Math.pow(temperature,2))*Rhumidity + c8*temperature*(Math.pow(Rhumidity,2)) + c9*(Math.pow(temperature,2))*(Math.pow(Rhumidity,2)) + c10*(Math.pow(temperature,3)) + c11*(Math.pow(Rhumidity,3)) + c12*(Math.pow(temperature,3))*Rhumidity + c13*temperature*(Math.pow(Rhumidity,3)) + c14*(Math.pow(temperature,3))*(Math.pow(Rhumidity,2)) + c15*(Math.pow(temperature,2))*(Math.pow(Rhumidity,3)) + c15*(Math.pow(temperature,3))*(Math.pow(Rhumidity,3));
-        return heatIndex;
-    }
-
     static class PQsort implements Comparator<Integer> {
 
         public int compare(Integer one, Integer two) {
@@ -479,14 +404,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     //MARK: Get data of cards from JSON response
-    void setData(){
+    void setData(JSONArray dataT){
         listData.clear();
+        JSONObject obj;
 
         try {
-            x = (JSONObject) dataTime.get(0);
-            Log.d("Humedad","HUMEDAD EN SAN FRANCISCO : " + x.getJSONObject("FCTTIME").getString("hour"));
+            obj = (JSONObject) dataT.get(0);
+            Log.d("Humedad","HUMEDAD EN SAN FRANCISCO : " + obj.getJSONObject("FCTTIME").getString("hour"));
         } catch  (JSONException e){
             Log.e("ERROR", e.getMessage(), e);
+            Toast.makeText(getApplicationContext(), "Coundn't set data in cards, check connection", Toast.LENGTH_SHORT).show();
+            return;
         }
 
         PQsort pqs = new PQsort();
@@ -494,14 +422,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mapTemps=new HashMap();
         mapType = new HashMap();
         pqRisk=new PriorityQueue<Integer>(12,pqs);
-        //PriorityQueue pqRisk = new PriorityQueue<Double>(12,pqs);
 
         int temp,hum;
         for (int i = 0; i< 12; i++){
             //Add temperature and humidity to its respective priority queues
-            temp=getJSONInt("english", i, "temp");
-            hum=getJSONInt("humidity", i, " ");
-            double heatIndex = getRisk(temp,Integer.toString(hum));
+            temp=instance.getJSONInt(obj, dataT, "english", i, "temp");
+            hum=instance.getJSONInt(obj, dataT, "humidity", i, " ");
+            double heatIndex = instance.getRisk(temp,Integer.toString(hum));
             Log.d("RISK",String.valueOf(i)+" "+String.valueOf((int)heatIndex));
 
             mapHums.put((int)heatIndex,String.valueOf(hum));
@@ -509,22 +436,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             pqRisk.add((int)heatIndex);
 
             if (temp <=80 ||  heatIndex <=90){
-                WeatherCard dummy = new WeatherCard(getJSONString("hour", i, "FCTTIME") + ":00", getJSONString("condition", i, " "), temp, hum, "green");
+                WeatherCard dummy = new WeatherCard(instance.getJSONString(obj, dataT, "hour", i, "FCTTIME") + ":00", instance.getJSONString(obj, dataT,"condition", i, " "), temp, hum, "green");
                 listData.add(dummy);
                 mapType.put((int)heatIndex,1);
                 Log.d("TYPE_C",String.valueOf((int)heatIndex)+" 1");
             }else if (heatIndex >= 91 && heatIndex <=103){
-                WeatherCard dummy = new WeatherCard(getJSONString("hour", i, "FCTTIME") + ":00", getJSONString("condition", i, " "), temp, hum, "yellow");
+                WeatherCard dummy = new WeatherCard(instance.getJSONString(obj, dataT,"hour", i, "FCTTIME") + ":00", instance.getJSONString(obj, dataT,"condition", i, " "), temp, hum, "yellow");
                 listData.add(dummy);
                 mapType.put((int)heatIndex,2);
                 Log.d("TYPE_C",String.valueOf((int)heatIndex)+" 2");
             } else if (heatIndex >= 104 && heatIndex <=125){
-                WeatherCard dummy = new WeatherCard(getJSONString("hour", i, "FCTTIME") + ":00", getJSONString("condition", i, " "), temp, hum, "orange");
+                WeatherCard dummy = new WeatherCard(instance.getJSONString(obj, dataT,"hour", i, "FCTTIME") + ":00",instance.getJSONString(obj, dataT,"condition", i, " "), temp, hum, "orange");
                 listData.add(dummy);
                 mapType.put((int)heatIndex,3);
                 Log.d("TYPE_C",String.valueOf((int)heatIndex)+" 3");
             }else {
-                WeatherCard dummy = new WeatherCard(getJSONString("hour", i, "FCTTIME") + ":00", getJSONString("condition", i, " "), temp, hum, "red");
+                WeatherCard dummy = new WeatherCard(instance.getJSONString(obj, dataT,"hour", i, "FCTTIME") + ":00", instance.getJSONString(obj, dataT,"condition", i, " "), temp, hum, "red");
                 listData.add(dummy);
                 mapType.put((int)heatIndex,4);
                 Log.d("TYPE_C",String.valueOf((int)heatIndex)+" 4");
@@ -536,8 +463,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void setMaxs() {
-
-        //double heatIndex = getRisk(Double.parseDouble(String.valueOf(pqTemp.peek())),String.valueOf(pqHum.peek()+"%"));
 
         int heatIndex = getMaxIndex();
         Log.d("HEATINDEX",String.valueOf(heatIndex));
@@ -581,39 +506,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
 
-    //MARK: Get data from json and change to data type
-    String getJSONString(String key, int id, String keyObject){
-        try {
-            x = (JSONObject) dataTime.get(id);
-            if (keyObject != " "){
-                return x.getJSONObject(keyObject).getString(key);
-            } else {
-                return x.getString(key);
-            }
-
-        } catch  (JSONException e){
-            Log.e("ERROR", e.getMessage(), e);
-        }
-        return " ";
-    }
-
-    int getJSONInt(String key, int id, String keyObject){
-        try {
-            x = (JSONObject) dataTime.get(id);
-            if (keyObject != " "){
-                return Integer.parseInt(x.getJSONObject(keyObject).getString(key));
-            } else {
-                return Integer.parseInt(x.getString(key));
-            }
-
-        } catch  (JSONException e){
-            Log.e("ERROR", e.getMessage(), e);
-        }
-
-        return 0;
-    }
-
-
     //MARK - API Implementation
     // IMPLEMENTATION ASYNCTASK FOR WEATHER API REQUEST
     // KEY - 25d0f02c485109f2
@@ -641,8 +533,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             try {
                 if (internet) {
                     URL url;
-                    if (states.get(state) != null) {
-                        url = new URL("http://api.wunderground.com/api/25d0f02c485109f2/conditions/hourly/q/" + states.get(state) + "/" + Location + ".json");
+                    if (instance.states.get(state) != null) {
+                        url = new URL("http://api.wunderground.com/api/25d0f02c485109f2/conditions/hourly/q/" + instance.states.get(state) + "/" + Location + ".json");
                     } else if (Location.equals("Monterrey")){
                         url = new URL("http://api.wunderground.com/api/25d0f02c485109f2/conditions/hourly/q/25.87,-100.20.json");
                     }else {
@@ -681,26 +573,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Log.i("INFO", response);
 
             try {
+                String humidity;
+                String temperature;
                 if (internet){
                     JSONObject object = (JSONObject) new JSONTokener(response).nextValue();
 
                     if(!object.has("current_observation")){
                         Toast.makeText(getApplicationContext(), "No information available \n for this location", Toast.LENGTH_SHORT).show();
+                        return;
                     } else{
                         humidity = object.getJSONObject("current_observation").getString("relative_humidity");
+                        temperature = object.getJSONObject("current_observation").getString("temp_f");
                     }
 
-                    Log.d("Query", object.toString());
-
-                    temperature = object.getJSONObject("current_observation").getString("temp_f");
-                    Log.d("Humedad","HUMEDAD EN SAN FRANCISCO : " + humidity);
-
                     tvCurrentTemperature.setText(temperature + " ºF");
-
                     tvCurrentHumidity.setText(humidity);
 
                     double itemperature = Double.parseDouble(temperature);
-                    double heatIndex = getRisk(Double.parseDouble(temperature), humidity);
+                    double heatIndex = instance.getRisk(Double.parseDouble(temperature), humidity);
 
                     if (itemperature <=80 ||  heatIndex <=90){
                         btGo.setImageResource(R.drawable.minimal_risk);
@@ -720,9 +610,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         RiskType=4;
                     }
 
-                    dataTime = (JSONArray) object.getJSONArray("hourly_forecast");
-
-                    setData();
+                    JSONArray dataTi = object.getJSONArray("hourly_forecast");
+                    setData(dataTi);
                 }
 
             } catch (JSONException e){
@@ -813,6 +702,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         }
     }
+
 
     //MARK: LOCATION
     @Override

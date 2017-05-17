@@ -20,11 +20,15 @@ package com.example.jessicamcavazoserhard.heatstress.ui;
 
 import android.app.ListActivity;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 
+import com.example.jessicamcavazoserhard.heatstress.BlurBuilder;
 import com.example.jessicamcavazoserhard.heatstress.R;
 import com.example.jessicamcavazoserhard.heatstress.model.Subject;
 
@@ -45,6 +49,16 @@ public class MoreInfoActivity extends ListActivity implements AdapterView.OnItem
 
         setListAdapter(subjectAdapter);
         getListView().setOnItemClickListener(this);
+
+        View FilterView = findViewById(R.id.activity_more_info);
+
+        //Blurry background
+        Bitmap icon = BitmapFactory.decodeResource(getResources(),
+                R.drawable.background);
+
+        Bitmap blurredBitmap = BlurBuilder.blur( MoreInfoActivity.this, icon);
+
+        FilterView.setBackgroundDrawable( new BitmapDrawable( getResources(), blurredBitmap ) );
     }
 
     //Getting information to populate list

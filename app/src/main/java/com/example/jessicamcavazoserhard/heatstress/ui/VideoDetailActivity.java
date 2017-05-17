@@ -1,12 +1,17 @@
 package com.example.jessicamcavazoserhard.heatstress.ui;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.example.jessicamcavazoserhard.heatstress.BlurBuilder;
 import com.example.jessicamcavazoserhard.heatstress.R;
 import com.example.jessicamcavazoserhard.heatstress.model.Subject;
 import com.google.android.youtube.player.YouTubeBaseActivity;
@@ -47,6 +52,16 @@ public class VideoDetailActivity extends YouTubeBaseActivity implements YouTubeP
 
         YouTubePlayerView youtubeplayer = (YouTubePlayerView) findViewById(R.id.youtube_player);
         youtubeplayer.initialize(API_KEY,this);
+
+        View FilterView = findViewById(R.id.activity_detail_video);
+
+        //Blurry background
+        Bitmap icon = BitmapFactory.decodeResource(getResources(),
+                R.drawable.background);
+
+        Bitmap blurredBitmap = BlurBuilder.blur( VideoDetailActivity.this, icon);
+
+        FilterView.setBackgroundDrawable( new BitmapDrawable( getResources(), blurredBitmap ) );
 
     }
 
