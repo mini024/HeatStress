@@ -25,6 +25,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
+import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -60,6 +61,7 @@ import com.example.jessicamcavazoserhard.heatstress.adapter.WeatherCardAdapter;
 import com.example.jessicamcavazoserhard.heatstress.model.WeatherCard;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import org.json.JSONArray;
@@ -69,6 +71,7 @@ import org.json.JSONTokener;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.SocketException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -79,7 +82,7 @@ import java.util.PriorityQueue;
 import static android.R.attr.data;
 import static android.R.attr.radius;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener, View.OnKeyListener, com.google.android.gms.location.LocationListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, View.OnKeyListener, LocationListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     //MARK - Elements of View
     ImageButton btGo;
@@ -102,6 +105,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     ArrayAdapter<String> adapterAutoComplete;
 
     //MARK - Variables
+    private LocationRequest locationRequest;
+    private GoogleApiClient googleApiClient;
     String Location;
     boolean internet;
     boolean Checked;
@@ -157,10 +162,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //MARK: Checkbox
         cbCurrentLocation = (CheckBox) findViewById(R.id.checkBox2);
         cbCurrentLocation.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
+
+            @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 Checked = isChecked;
                 if(isChecked && isInternetAvailable()){
+                    new RetrieveWeatherForLocation().execute();
                 } else if (!isInternetAvailable()) {
                     internet = false;
                     new AlertDialog.Builder(MainActivity.this).setTitle("Internet Connection").setMessage("Please check your internet connection").setNeutralButton("Close", null).show();
@@ -229,6 +236,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         etLocation.setOnKeyListener(this);
         etLocation.setThreshold(3);
         etLocation.addTextChangedListener(textWatcher);
+
     }
 
     //MARK: OnClick on button image and showLocation
@@ -259,6 +267,46 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     //MARK: LOCATION
+
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+        locationRequest = LocationRequest.create();
+        locationRequest.setPriority(LocationRequest.PRIORITY_LOW_POWER);
+        locationRequest.setInterval(300000);
+
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this);
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
+    }
+
+    @Override
+    protected void onStart(){
+        super.onStart();
+    }
+
+    @Override
+    protected void onStop(){
+        super.onStop();
+    }
+
     @Override
     public void onLocationChanged(android.location.Location location) {
         lLat = location.getLatitude();
@@ -545,8 +593,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     } else {
                         url = new URL("http://api.wunderground.com/api/25d0f02c485109f2/conditions/hourly/q/" + state + "/" + Location + ".json");
                     }
-                    HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-                    Log.d("Connecion", "Retrieving weather from: " + url);
+
+                        HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+                        urlConnection.setConnectTimeout(5000);
+                        Log.d("Connecion", "Retrieving weather from: " + url);
                     try {
                         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
                         StringBuilder stringBuilder = new StringBuilder();
@@ -567,11 +617,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 } else {
                     return null;
                 }
+            }catch (java.net.SocketTimeoutException e){
+                new AlertDialog.Builder(MainActivity.this).setTitle("Connection Error").setMessage("Check your network settings").setNeutralButton("Close", null).show();
+                return null;
             }
             catch(Exception e) {
                 Log.e("ERROR", e.getMessage(), e);
                 new AlertDialog.Builder(MainActivity.this).setTitle("Location Error").setMessage(e.getMessage()).setNeutralButton("Close", null).show();
-
                 return null;
             }
         }
@@ -597,7 +649,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         etLocation.setText(Location);
                         humidity = object.getJSONObject("current_observation").getString("relative_humidity");
                         temperature = object.getJSONObject("current_observation").getString("temp_f");
-                        currentLocation = object.getJSONObject("current_observation").getString("full");
+                        currentLocation = object.getJSONObject("current_observation").getJSONObject("display_location").getString("full");
                     }
 
                     tvCurrentTemperature.setText(temperature + " ºF");
