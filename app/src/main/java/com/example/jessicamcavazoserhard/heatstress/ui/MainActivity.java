@@ -585,6 +585,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         Toast.makeText(getApplicationContext(), "No information available \n for this location", Toast.LENGTH_SHORT).show();
                         return;
                     } else{
+                        Location = object.getJSONObject("current_observation").getJSONObject("display_location").getString("fully");
+                        etLocation.setText(Location);
                         humidity = object.getJSONObject("current_observation").getString("relative_humidity");
                         temperature = object.getJSONObject("current_observation").getString("temp_f");
                     }
