@@ -29,6 +29,8 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
+
+
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -382,13 +384,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         ArrayList<WeatherCard> dummyData = new ArrayList<>();
         WeatherCard dummy = new WeatherCard("11:00 AM"," ",0,0,"green");
         dummyData.add(dummy);
-        dummy = new WeatherCard("12:00 PM","Snowy",0,0,"green");
+        dummy = new WeatherCard("12:00 PM","",0,0,"green");
         dummyData.add(dummy);
-        dummy = new WeatherCard("1:00 PM"," ",0,0, "yellow");
+        dummy = new WeatherCard("1:00 PM"," ",0,0, "green");
         dummyData.add(dummy);
-        dummy = new WeatherCard("2:00 PM"," ",0,0, "orange");
+        dummy = new WeatherCard("2:00 PM"," ",0,0, "green");
         dummyData.add(dummy);
-        dummy = new WeatherCard("3:00 PM"," ",0,0, "red");
+        dummy = new WeatherCard("3:00 PM"," ",0,0, "green");
         dummyData.add(dummy);
         dummy = new WeatherCard("4:00 PM"," ",0,0, "green");
         dummyData.add(dummy);

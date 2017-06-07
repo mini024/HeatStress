@@ -154,7 +154,8 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/checkBox2"
         android:layout_toEndOf="@+id/textView_location"
-        android:layout_marginTop="15dp">
+        android:layout_marginTop="15dp"
+        android:id="@+id/linearLayout4">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -172,9 +173,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
-                android:text="Now"
+                android:text="Current Risk"
                 android:textColor="@android:color/white"
-                android:textSize="18sp" />
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/textView_risk"
@@ -209,13 +210,12 @@
                 android:id="@+id/textView2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="11dp"
                 android:layout_weight="1"
-                android:text="Max"
+                android:text="Today's Maximums"
                 android:textColor="@android:color/background_light"
-                android:textSize="18sp" />
+                android:textSize="14sp"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true" />
 
             <LinearLayout
                 android:id="@+id/linearLayout3"
@@ -290,5 +290,15 @@
         </RelativeLayout>
 
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/text_label_current_observation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/linearLayout4"
+        android:layout_centerHorizontal="true"
+        android:text="Current Conditions"
+        android:textColor="@color/card_color"
+        android:textSize="15sp" />
 
 </RelativeLayout>
